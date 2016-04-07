@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class JoyStickManager
+public class JoyStickManager : MonoBehaviour
 {
     public enum e_XBoxControllerAxis
     {
@@ -45,7 +45,7 @@ public class JoyStickManager
     private Dictionary<e_XBoxControllerAxis, string> _givenNameToAxis;
     private Dictionary<e_XBoxControllerButtons, string> _givenNameToButton;
 
-    public JoyStickManager(int id)
+    public void Reset(int id)
     {
         _givenNameToAxis = new Dictionary<e_XBoxControllerAxis, string>();
         _givenNameToButton = new Dictionary<e_XBoxControllerButtons, string>();

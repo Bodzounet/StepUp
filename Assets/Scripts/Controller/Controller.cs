@@ -54,7 +54,13 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         _rgbd2d = GetComponent<Rigidbody2D>();
-        _jsm = new JoyStickManager(playerNumber);
+
+        GameObject go = new GameObject();
+        go.name = "Controller";
+        go.transform.parent = this.transform;
+
+        _jsm = go.AddComponent<JoyStickManager>();
+        _jsm.Reset(playerNumber);
 
         _colliders = this.GetComponents<Collider2D>().Where(x => x.isTrigger == false).ToArray();
     }
@@ -64,7 +70,7 @@ public class Controller : MonoBehaviour
         _maxJumpCharges = _jumpcharges;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         float xVel, yVel;
 
