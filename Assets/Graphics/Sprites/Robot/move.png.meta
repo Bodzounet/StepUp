@@ -1,12 +1,11 @@
 fileFormatVersion: 2
-guid: 2d310376dc1991e4a90bc6036ea6d360
-timeCreated: 1459686177
+guid: 25b932d4203093a40abfa9c843da51c7
+timeCreated: 1459686238
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: air_jump_0
-    21300002: air_jump_1
-    21300004: air_jump_2
+    21300000: move_0
+    21300002: move_1
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -32,7 +31,7 @@ TextureImporter:
   textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
-    filterMode: -1
+    filterMode: 0
     aniso: 16
     mipBias: -1
     wrapMode: 1
@@ -53,7 +52,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: air_jump_0
+    - name: move_0
       rect:
         serializedVersion: 2
         x: 0
@@ -64,15 +63,15 @@ TextureImporter:
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: -14, y: 58}
-        - {x: -24, y: 48}
-        - {x: -24, y: 15}
-        - {x: -14, y: 0}
+      - - {x: 6, y: 59}
+        - {x: -15, y: 49}
+        - {x: -15, y: 13}
+        - {x: -10, y: 0}
         - {x: 9, y: 0}
-        - {x: 16, y: 3}
-        - {x: 16, y: 50}
-        - {x: 7, y: 58}
-    - name: air_jump_1
+        - {x: 26, y: 28}
+        - {x: 26, y: 48}
+        - {x: 13, y: 59}
+    - name: move_1
       rect:
         serializedVersion: 2
         x: 64
@@ -83,35 +82,14 @@ TextureImporter:
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: 6, y: 58}
-        - {x: -11, y: 58}
-        - {x: -24, y: 42}
-        - {x: -24, y: 30}
-        - {x: -21, y: 11}
-        - {x: -9, y: 0}
-        - {x: 7, y: 0}
-        - {x: 13, y: 6}
-        - {x: 16, y: 17}
-        - {x: 16, y: 50}
-    - name: air_jump_2
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 64
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline:
-      - - {x: -15, y: 58}
-        - {x: -24, y: 52}
-        - {x: -24, y: 18}
-        - {x: -14, y: 0}
-        - {x: 11, y: 0}
-        - {x: 16, y: 14}
-        - {x: 16, y: 54}
-        - {x: 10, y: 58}
+      - - {x: 6, y: 59}
+        - {x: -15, y: 49}
+        - {x: -15, y: 13}
+        - {x: -10, y: 0}
+        - {x: 9, y: 0}
+        - {x: 26, y: 28}
+        - {x: 26, y: 48}
+        - {x: 13, y: 59}
     outline: []
   spritePackingTag: 
   userData: 

@@ -12,6 +12,7 @@ public class Controller : MonoBehaviour
 
     private Rigidbody2D _rgbd2d;
     private JoyStickManager _jsm;
+    private Animator _anim;
 
     [SerializeField]
     private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright
@@ -61,6 +62,8 @@ public class Controller : MonoBehaviour
 
         _jsm = go.AddComponent<JoyStickManager>();
         _jsm.Reset(playerNumber);
+
+        _anim = this.GetComponent<Animator>();
 
         _colliders = this.GetComponents<Collider2D>().Where(x => x.isTrigger == false).ToArray();
     }
