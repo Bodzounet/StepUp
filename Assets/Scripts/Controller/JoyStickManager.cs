@@ -98,8 +98,8 @@ public class JoyStickManager : MonoBehaviour
 
     public bool GetButtonUp(e_XBoxControllerButtons btn)
     {
-        if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT) 
-            Debug.LogError("RT and LT releasing is not managed.");
+        if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
+            return Input.GetAxis(_givenNameToButton[btn]) == 0;
 
         return Input.GetButtonUp(_givenNameToButton[btn]);
     }
