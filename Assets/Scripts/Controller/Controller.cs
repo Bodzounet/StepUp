@@ -3,28 +3,35 @@ using System.Collections;
 using System.Linq;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Controller : MonoBehaviour 
+[RequireComponent(typeof(Attacks))]
+public class Controller : MonoBehaviour
 {
-    public float lateralSpeed = 5f;
-    public float jumpSpeed = 3f;
+    public delegate void OnStunDelegate();
+    public event OnStunDelegate OnStun;
 
-    public int playerNumber;
-
-    private Rigidbody2D _rgbd2d;
-    private JoyStickManager _jsm;
-    private Animator _anim;
-    private Transform _transform;
-    private bool _isLookingRight;
+    #region variables & properties
 
     [SerializeField]
-    private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright
-    private Collider2D[] _colliders;
+    private float _lateralSpeed = 5f;
+    public float LateralSpeed
+    {
+        get { return _lateralSpeed; }
+        set { _lateralSpeed = value; }
+    }
+
+    [SerializeField]
+    private float _jumpSpeed = 3f;
+    public float JumpSpeed
+    {
+        get { return _jumpSpeed; }
+        set { _jumpSpeed = value; }
+    }
 
     private bool _grounded;
     public bool Grounded
     {
         get { return _grounded; }
-        private set 
+        private set
         {
             if (_grounded != value)
             {
@@ -40,7 +47,14 @@ public class Controller : MonoBehaviour
             _grounded = value;
         }
     }
-    
+
+    private bool _stunned;
+    public bool Stunned
+    {
+        get { return _stunned; }
+        set { _stunned = value; }
+    }
+
     // the number of jump the player can do (2 by default : basic jump and air jump)
     private int _jumpcharges = 2;
 
@@ -53,6 +67,66 @@ public class Controller : MonoBehaviour
         get { return _maxJumpCharges; }
         set { _maxJumpCharges = value; }
     }
+
+    private bool _dashing = false;
+    public bool Dashing
+    {
+        get { return _dashing; }
+        set { _dashing = value; }
+    }
+
+    [SerializeField]
+    private float _dashDuration = 1f;
+    public float DashDuration
+    {
+        get { return _dashDuration; }
+        set { _dashDuration = value; }
+    }
+
+    [SerializeField]
+    private float _dashVelocity = 30f;
+    public float DashVelocity
+    {
+        get { return _dashVelocity; }
+        set { _dashVelocity = value; }
+    }
+
+    public int playerNumber;
+
+    private Rigidbody2D _rgbd2d;
+    private Animator _anim;
+    private Transform _transform;
+
+    private JoyStickManager _jsm;
+
+    public JoyStickManager Jsm
+    {
+        get { return _jsm; }
+    }
+
+    [SerializeField]
+    private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright, center
+    private Collider2D[] _colliders;
+
+    public bool IsLookingRight
+    {
+        get
+        {
+            return Mathf.Sign(ItemCorner[4].position.x - ItemCorner[0].position.x) > 0;
+        }
+    }
+
+    public bool IsMoving
+    {
+        get
+        {
+            return _rgbd2d.velocity != Vector2.zero;
+        }
+    }
+
+    #endregion
+
+    #region Unity CallBacks
 
     void Awake()
     {
@@ -67,7 +141,6 @@ public class Controller : MonoBehaviour
 
         _transform = this.GetComponent<Transform>();
         _anim = this.GetComponent<Animator>();
-        _isLookingRight = true;
 
         _colliders = this.GetComponents<Collider2D>().Where(x => x.isTrigger == false).ToArray();
     }
@@ -77,22 +150,24 @@ public class Controller : MonoBehaviour
         _maxJumpCharges = _jumpcharges;
     }
 
+    private float xVel, yVel = 0;
+
     void Update()
     {
-        float xVel, yVel;
-
-        xVel = _jsm.GetAxisClamped(JoyStickManager.e_XBoxControllerAxis.Horizontal) * lateralSpeed;
-        _anim.SetFloat("xVel", xVel);
-        if (xVel < 0)
+        if (!_stunned && !_dashing)
         {
-            _transform.localScale = new Vector3(-3, 3, 3);
-        }
-        else if (xVel > 0)
-        {
-            _transform.localScale = new Vector3(3, 3, 3);
+            xVel = _jsm.GetAxisClamped(JoyStickManager.e_XBoxControllerAxis.Horizontal) * _lateralSpeed;
+            if (xVel < 0)
+            {
+                _transform.localScale = new Vector3(-3, 3, 3);
+            }
+            else if (xVel > 0)
+            {
+                _transform.localScale = new Vector3(3, 3, 3);
+            }
         }
 
-        if (_jumpcharges > 0 && _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
+        if (!_stunned && _jumpcharges > 0 && _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
         {
             if (!Grounded)
             {
@@ -103,30 +178,29 @@ public class Controller : MonoBehaviour
             {
                 _anim.Play("Jump");
             }
-            yVel = jumpSpeed;
+            yVel = _jumpSpeed;
         }
         else
         {
             yVel = _rgbd2d.velocity.y;
         }
+
+        if (!_stunned && !_dashing)
+        {
+            if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LB))
+            {
+                StartCoroutine("Co_Dash", -1);
+            }
+            else if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RB))
+            {
+                StartCoroutine("Co_Dash", 1);
+            }
+        }
+
         jumpHelper();
         _anim.SetBool("Grounded", _grounded);
 
         _rgbd2d.velocity = new Vector2(xVel, yVel);
-
-        //Debug.Log("A activated : " + _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.B));
-        //Debug.Log("A activated : " + Input.GetButtonDown("B1"));
-    }
-
-    private void jumpHelper()
-    {
-        RaycastHit2D hit, hit2;
-
-        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
-        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f, 1 << LayerMask.NameToLayer("Platform"));
-        //Debug.Log("hit : " + hit.collider);
-
-        Grounded = hit.collider != null && hit2.collider == null;
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -145,11 +219,76 @@ public class Controller : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    #endregion
+
+    #region Coroutines
+
+    private IEnumerator Co_Dash(int direction)
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f);
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
+        //_anim.Play("Dash");
+        _dashing = true;
+        xVel = _dashVelocity * direction;
+        yield return new WaitForSeconds(_dashDuration);
+        xVel = 0;
+        _dashing = false;
     }
+
+    private IEnumerator Co_Stun(float duration)
+    {
+        //_anim.Play("Stun");
+        _stunned = true;
+        xVel = 0;
+        if (yVel > 0)
+        {
+            yVel = 0;
+        }
+        yield return new WaitForSeconds(duration);
+        _stunned = false;
+    }
+
+    #endregion
+
+    #region helpers
+
+    private void jumpHelper()
+    {
+        RaycastHit2D hit, hit2;
+
+        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
+        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f, 1 << LayerMask.NameToLayer("Platform"));
+        //Debug.Log("hit : " + hit.collider);
+
+        Grounded = hit.collider != null && hit2.collider == null;
+    }
+
+    #endregion
+
+    #region public action
+
+    public void Stun(float duration)
+    {
+        if (OnStun != null)
+            OnStun();
+        StartCoroutine("Co_Stun", duration);
+    }
+
+    /// <summary>
+    /// direction also take into account the intensity of the push. (ie, the vector is not normalized)
+    /// </summary>
+    /// <param name="direction"></param>
+    public void Push(Vector2 direction)
+    {
+        xVel = direction.x;
+        yVel = direction.y;
+    }
+
+    #endregion
+
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f);
+    //    Gizmos.color = Color.cyan;
+    //    Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
+    //}
 }
