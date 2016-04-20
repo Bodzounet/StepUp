@@ -94,8 +94,13 @@ public class Controller : MonoBehaviour
     public int playerNumber;
 
     private Rigidbody2D _rgbd2d;
-    private Animator _anim;
     private Transform _transform;
+
+    private Animator _anim;
+    public Animator Anim
+    {
+        get { return _anim; }
+    }
 
     private JoyStickManager _jsm;
 
@@ -197,26 +202,12 @@ public class Controller : MonoBehaviour
             }
         }
 
+        Debug.Log("Grounded : " + Grounded);
+
         jumpHelper();
         _anim.SetBool("Grounded", _grounded);
 
         _rgbd2d.velocity = new Vector2(xVel, yVel);
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        foreach (Collider2D collider in _colliders)
-        {
-            Physics2D.IgnoreCollision(col, collider, true);
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-        foreach (Collider2D collider in _colliders)
-        {
-            Physics2D.IgnoreCollision(col, collider, false);
-        }
     }
 
     #endregion
@@ -225,7 +216,8 @@ public class Controller : MonoBehaviour
 
     private IEnumerator Co_Dash(int direction)
     {
-        //_anim.Play("Dash");
+        _anim.Play(IsLookingRight ? (direction == 1 ? "Dash_Front" : "Dash_Back") : ((direction == -1 ? "Dash_Front" : "Dash_Back")));
+
         _dashing = true;
         xVel = _dashVelocity * direction;
         yield return new WaitForSeconds(_dashDuration);
@@ -255,8 +247,9 @@ public class Controller : MonoBehaviour
         RaycastHit2D hit, hit2;
 
         hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
-        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f, 1 << LayerMask.NameToLayer("Platform"));
-        //Debug.Log("hit : " + hit.collider);
+        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, 1 << LayerMask.NameToLayer("Platform"));
+        Debug.Log("hit : " + hit.collider);
+        Debug.Log("hit2 : " + hit2.collider);
 
         Grounded = hit.collider != null && hit2.collider == null;
     }
@@ -284,11 +277,11 @@ public class Controller : MonoBehaviour
 
     #endregion
 
-    //void OnDrawGizmos()
-    //{
-    //    Gizmos.color = Color.blue;
-    //    Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.02f, ItemCorner[3].position + Vector3.up * 0.02f);
-    //    Gizmos.color = Color.cyan;
-    //    Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
-    //}
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
+    }
 }

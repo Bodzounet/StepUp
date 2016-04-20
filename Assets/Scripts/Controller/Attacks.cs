@@ -10,6 +10,8 @@ public class Attacks : MonoBehaviour
         STRONG
     }
 
+
+
     /// <summary>
     /// the required time for a strong attack to be fully charged
     /// </summary>
@@ -115,15 +117,10 @@ public class Attacks : MonoBehaviour
         _controller = GetComponent<Controller>();
     }
 
-    void Start()
-    {
-
-    }
-
     void Update()
     {
         // start charging strong attack
-        if (!_chargingStrongHit && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LT))
+        if (!_chargingStrongHit && !_cdStrongHit && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LT))
         {
             Debug.Log("charging strong attack");
             _startChargingTime = Time.time;
@@ -136,10 +133,11 @@ public class Attacks : MonoBehaviour
             Debug.Log("releasing strong attack");
             StopCoroutine("Co_StrongHit");
             StrongHit((Time.time - _startChargingTime) / _strongAttackChargeDelay);
+            StartCD(e_AttackType.STRONG);
         }
 
         // use light attack
-        if (_controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT))
+        if (!_cdLightHit && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT))
         {
             // anim.play(LightAttack);
         }
@@ -166,7 +164,8 @@ public class Attacks : MonoBehaviour
     /// <param name="chargePercentage"></param> la puissance du stun, 100% -> radius += _strongAttackFullChargeRadiusIncrease
     void StrongHit(float chargePercentage)
     {
-        // anim.play(StrongAttack)
+        _controller.Anim.Play("Strong_Attack");
+        StartCD(e_AttackType.STRONG);
         _chargingStrongHit = false;
 
         float radius = _strongAttackRadius * (1 + chargePercentage * _strongAttackFullChargeRadiusIncrease);
@@ -231,7 +230,7 @@ public class Attacks : MonoBehaviour
     public IEnumerator Co_StrongHit()
     {
         _chargingStrongHit = true;
-        // anim.play(Charging)
+        _controller.Anim.Play("Charge");
         yield return new WaitForSeconds(ChargeDelay);
         StrongHit(1);
     }
@@ -243,7 +242,7 @@ public class Attacks : MonoBehaviour
         _cdLightHit = false;
     }
 
-    public IEnumerator Co_CDStrongtHit()
+    public IEnumerator Co_CDStrongHit()
     {
         _cdStrongHit = true;
         yield return new WaitForSeconds(StrongAttackCooldown);
