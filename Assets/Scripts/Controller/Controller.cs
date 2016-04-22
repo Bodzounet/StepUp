@@ -8,11 +8,18 @@ public class Controller : MonoBehaviour
 {
     public delegate void OnStunDelegate();
     public event OnStunDelegate OnStun;
+    public event OnStunDelegate OnEndStun;
 
     #region variables & properties
 
     [SerializeField]
-    private float _lateralSpeed = 5f;
+    private float _baseLateralSpeed = 5f;
+    public float BaseLateralSpeed
+    {
+        get { return _baseLateralSpeed; }
+    }
+
+    private float _lateralSpeed;
     public float LateralSpeed
     {
         get { return _lateralSpeed; }
@@ -20,7 +27,13 @@ public class Controller : MonoBehaviour
     }
 
     [SerializeField]
-    private float _jumpSpeed = 3f;
+    private float _baseJumpSpeed = 3f;
+    public float BaseJumpSpeed
+    {
+        get { return _baseJumpSpeed; }
+    }
+
+    private float _jumpSpeed;
     public float JumpSpeed
     {
         get { return _jumpSpeed; }
@@ -52,7 +65,24 @@ public class Controller : MonoBehaviour
     public bool Stunned
     {
         get { return _stunned; }
-        set { _stunned = value; }
+        set 
+        {
+            _stunned = value;
+            if (value)
+            {
+                if (OnStun != null)
+                {
+                    OnStun();
+                }
+            }
+            else
+            {
+                if (OnEndStun != null)
+                {
+                    OnEndStun();
+                }
+            }
+        }
     }
 
     // the number of jump the player can do (2 by default : basic jump and air jump)
@@ -75,26 +105,59 @@ public class Controller : MonoBehaviour
         set { _dashing = value; }
     }
 
+    private float _baseDashDuration = 1f;
+    public float BaseDashDuration
+    {
+        get { return _baseDashDuration; }
+    }
+
     [SerializeField]
-    private float _dashDuration = 1f;
+    private float _dashDuration;
     public float DashDuration
     {
         get { return _dashDuration; }
         set { _dashDuration = value; }
     }
 
+    private float _baseDashVelocity = 30f;
+    public float BaseDashVelocity
+    {
+        get { return _baseDashVelocity; }
+    }
+
     [SerializeField]
-    private float _dashVelocity = 30f;
+    private float _dashVelocity;
     public float DashVelocity
     {
         get { return _dashVelocity; }
         set { _dashVelocity = value; }
     }
 
+    private float _baseDashRecoverTime = 5f;
+    public float BaseDashRecoverTime
+    {
+        get { return _baseDashRecoverTime; }
+    }
+
+    [SerializeField]
+    private float _dashRecoverTime;
+    public float DashRecoverTime
+    {
+        get { return _dashRecoverTime; }
+        set { _dashRecoverTime = value; }
+    }
+
+    private bool _canDash = true;
+
     public int playerNumber;
 
-    private Rigidbody2D _rgbd2d;
     private Transform _transform;
+
+    private Rigidbody2D _rgbd2d;
+    public Rigidbody2D Rgbd2d
+    {
+        get { return _rgbd2d; }
+    }
 
     private Animator _anim;
     public Animator Anim
@@ -103,7 +166,6 @@ public class Controller : MonoBehaviour
     }
 
     private JoyStickManager _jsm;
-
     public JoyStickManager Jsm
     {
         get { return _jsm; }
@@ -111,7 +173,6 @@ public class Controller : MonoBehaviour
 
     [SerializeField]
     private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright, center
-    private Collider2D[] _colliders;
 
     public bool IsLookingRight
     {
@@ -146,13 +207,11 @@ public class Controller : MonoBehaviour
 
         _transform = this.GetComponent<Transform>();
         _anim = this.GetComponent<Animator>();
-
-        _colliders = this.GetComponents<Collider2D>().Where(x => x.isTrigger == false).ToArray();
     }
 
     void Start()
     {
-        _maxJumpCharges = _jumpcharges;
+        ResetController();
     }
 
     private float xVel, yVel = 0;
@@ -184,25 +243,26 @@ public class Controller : MonoBehaviour
                 _anim.Play("Jump");
             }
             yVel = _jumpSpeed;
+            // pushing back the player under me ?
         }
         else
         {
             yVel = _rgbd2d.velocity.y;
         }
 
-        if (!_stunned && !_dashing)
+        if (!_stunned && _canDash && !_dashing)
         {
             if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LB))
             {
                 StartCoroutine("Co_Dash", -1);
+                StartCoroutine("Co_ReloadDash");
             }
             else if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RB))
             {
                 StartCoroutine("Co_Dash", 1);
+                StartCoroutine("Co_ReloadDash");
             }
         }
-
-        Debug.Log("Grounded : " + Grounded);
 
         jumpHelper();
         _anim.SetBool("Grounded", _grounded);
@@ -223,6 +283,13 @@ public class Controller : MonoBehaviour
         yield return new WaitForSeconds(_dashDuration);
         xVel = 0;
         _dashing = false;
+    }
+
+    private IEnumerator Co_ReloadDash()
+    {
+        _canDash = false;
+        yield return new WaitForSeconds(DashRecoverTime);
+        _canDash = true;
     }
 
     private IEnumerator Co_Stun(float duration)
@@ -248,8 +315,6 @@ public class Controller : MonoBehaviour
 
         hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
         hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, 1 << LayerMask.NameToLayer("Platform"));
-        Debug.Log("hit : " + hit.collider);
-        Debug.Log("hit2 : " + hit2.collider);
 
         Grounded = hit.collider != null && hit2.collider == null;
     }
@@ -260,8 +325,8 @@ public class Controller : MonoBehaviour
 
     public void Stun(float duration)
     {
-        if (OnStun != null)
-            OnStun();
+        if (_dashing)
+            return;
         StartCoroutine("Co_Stun", duration);
     }
 
@@ -271,8 +336,31 @@ public class Controller : MonoBehaviour
     /// <param name="direction"></param>
     public void Push(Vector2 direction)
     {
+        if (_dashing)
+            return;
         xVel = direction.x;
         yVel = direction.y;
+    }
+
+    /// <summary>
+    /// when respawning, for example
+    /// </summary>
+    public void ResetController()
+    {
+        LateralSpeed = _baseDashDuration;
+        DashRecoverTime = _baseDashRecoverTime;
+        DashVelocity = _baseDashVelocity;
+        JumpSpeed = _baseJumpSpeed;
+        LateralSpeed = _baseLateralSpeed;
+
+        MaxJumpCharges = 2;
+
+        _canDash = true;
+        _dashing = false;
+        _stunned = false;
+
+        StopAllCoroutines();
+        GetComponent<Attacks>().ResetAttacks();
     }
 
     #endregion

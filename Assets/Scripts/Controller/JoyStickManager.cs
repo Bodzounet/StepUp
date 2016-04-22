@@ -83,6 +83,12 @@ public class JoyStickManager : MonoBehaviour
         return 0;
     }
 
+    public float GetAxisAngle()
+    {
+        // minus -> trigo rotation
+        return -Mathf.Atan2(Input.GetAxis(_givenNameToAxis[e_XBoxControllerAxis.Vertical]), Input.GetAxis(_givenNameToAxis[e_XBoxControllerAxis.Horizontal])) * Mathf.Rad2Deg;
+    }
+
     /// <summary>
     /// names are : 
     /// A, B, Y, X, Start, Back, RB, RT, LB, LT, LeftJSClick, RightJSClick
