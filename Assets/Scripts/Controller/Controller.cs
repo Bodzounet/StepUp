@@ -12,6 +12,9 @@ public class Controller : MonoBehaviour
 
     private Rigidbody2D _rgbd2d;
     private JoyStickManager _jsm;
+    private Animator _anim;
+    private Transform _transform;
+    private bool _isLookingRight;
 
     [SerializeField]
     private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright
@@ -54,7 +57,17 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         _rgbd2d = GetComponent<Rigidbody2D>();
-        _jsm = new JoyStickManager(playerNumber);
+
+        GameObject go = new GameObject();
+        go.name = "Controller";
+        go.transform.parent = this.transform;
+
+        _jsm = go.AddComponent<JoyStickManager>();
+        _jsm.Reset(playerNumber);
+
+        _transform = this.GetComponent<Transform>();
+        _anim = this.GetComponent<Animator>();
+        _isLookingRight = true;
 
         _colliders = this.GetComponents<Collider2D>().Where(x => x.isTrigger == false).ToArray();
     }
@@ -64,16 +77,32 @@ public class Controller : MonoBehaviour
         _maxJumpCharges = _jumpcharges;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         float xVel, yVel;
 
         xVel = _jsm.GetAxisClamped(JoyStickManager.e_XBoxControllerAxis.Horizontal) * lateralSpeed;
+        _anim.SetFloat("xVel", xVel);
+        if (xVel < 0)
+        {
+            _transform.localScale = new Vector3(-3, 3, 3);
+        }
+        else if (xVel > 0)
+        {
+            _transform.localScale = new Vector3(3, 3, 3);
+        }
 
         if (_jumpcharges > 0 && _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
         {
             if (!Grounded)
+            {
                 _jumpcharges--;
+                _anim.Play("Air Jump");
+            }
+            else
+            {
+                _anim.Play("Jump");
+            }
             yVel = jumpSpeed;
         }
         else
@@ -81,6 +110,7 @@ public class Controller : MonoBehaviour
             yVel = _rgbd2d.velocity.y;
         }
         jumpHelper();
+        _anim.SetBool("Grounded", _grounded);
 
         _rgbd2d.velocity = new Vector2(xVel, yVel);
 
