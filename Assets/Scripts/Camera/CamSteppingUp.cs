@@ -1,36 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CamSteppingUp : MonoBehaviour
 {
-
-    public GameObject Player;
-    public GameObject stepUpTrigger;
-    private Transform playerPos;
-    private Transform triggerPos;
+    [SerializeField]
+    private Transform _arbiterTransform;
     private float time;
-    Vector3 velo = Vector3.zero;
+    Vector3 velo;
 
     // Use this for initialization
     void Start()
     {
         time = 0.3f;
-
+        velo = Vector3.zero;
     }
 
-    void StepUpCam()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        playerPos = Player.GetComponent<Transform>();
-        triggerPos = stepUpTrigger.GetComponent<Transform>();
-        if (playerPos.position.y > triggerPos.position.y)
+        if (other.tag == "Player")
         {
-            transform.position = Vector3.SmoothDamp(transform.position, transform.position + new Vector3(0, 5, 0), ref velo, time);
+            StopAllCoroutines();
+            StartCoroutine("co_MoveCamera");
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private IEnumerator co_MoveCamera()
     {
-        StepUpCam();
+        Vector3 finalPos = _arbiterTransform.position + new Vector3(0, 3, 0);
+        while (_arbiterTransform.position.y < finalPos.y)
+        {
+            _arbiterTransform.position = Vector3.Lerp(_arbiterTransform.position, finalPos, 0.1f);
+            yield return (new WaitForEndOfFrame());
+        }
     }
 }

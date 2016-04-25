@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class PrceduralLevelGeneration : MonoBehaviour
+public class ProceduralLevelGeneration : MonoBehaviour
 {
 
     public GameObject[] platforms;

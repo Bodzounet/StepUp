@@ -3,28 +3,11 @@ using System.Collections;
 
 public class CheckDead : MonoBehaviour
 {
-    public GameObject player;
-    public GameObject deadTrigger;
-
-    void Start()
+    void OnTriggerEnter2D(Collider2D other)
     {
-    }
-
-    bool isDead(GameObject go)
-    {
-        Transform objPos = go.GetComponent<Transform>();
-        Transform deadTriggerPos = deadTrigger.GetComponent<Transform>();
-        Renderer rendPlayer = go.GetComponent<Renderer>();
-        if (objPos.position.y + rendPlayer.bounds.size.y / 2 < deadTriggerPos.position.y)
+        if (other.tag == "Player")
         {
-            //retirer une vie
-            return true;
+            Destroy(other.gameObject);
         }
-        return false;
-    }
-
-    void Update()
-    {
-        Debug.Log(isDead(player));
     }
 }
