@@ -83,6 +83,12 @@ public class JoyStickManager : MonoBehaviour
         return 0;
     }
 
+    public float GetAxisAngle()
+    {
+        // minus -> trigo rotation
+        return -Mathf.Atan2(Input.GetAxis(_givenNameToAxis[e_XBoxControllerAxis.Vertical]), Input.GetAxis(_givenNameToAxis[e_XBoxControllerAxis.Horizontal])) * Mathf.Rad2Deg;
+    }
+
     /// <summary>
     /// names are : 
     /// A, B, Y, X, Start, Back, RB, RT, LB, LT, LeftJSClick, RightJSClick
@@ -98,8 +104,8 @@ public class JoyStickManager : MonoBehaviour
 
     public bool GetButtonUp(e_XBoxControllerButtons btn)
     {
-        if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT) 
-            Debug.LogError("RT and LT releasing is not managed.");
+        if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
+            return Input.GetAxis(_givenNameToButton[btn]) == 0;
 
         return Input.GetButtonUp(_givenNameToButton[btn]);
     }
