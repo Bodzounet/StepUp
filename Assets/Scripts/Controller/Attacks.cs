@@ -209,6 +209,8 @@ public class Attacks : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(_controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT));
+
         // start charging strong attack
         if (!_chargingStrongHit && !_cdStrongHit && _controller.Grounded && !_controller.Stunned && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LT))
         {
