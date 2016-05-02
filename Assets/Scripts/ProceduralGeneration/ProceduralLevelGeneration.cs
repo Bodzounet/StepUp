@@ -8,15 +8,18 @@ public class ProceduralLevelGeneration : MonoBehaviour
 
     public GameObject[] platforms;
     public int maxDifficulty;
-    public GameObject camera;
+    public GameObject arbiter;
+    public GameObject bottomTrigger;
     public GameObject firstPlatform;
 
 
     private float difficulyLevel;
     private float steps;
     private const float STEP_SIZE = 15;
-    private const float DIFFICULTY_SETP = 1.0f;
+    private const float DIFFICULTY_SETP = 0.1f;
     private GameObject instPlatform;
+    private List<GameObject> platformInstantiated;
+
 
     private List<GameObject>[] platformsDifficulty; //[ [,] platformsDificulty;
     // Use this for initialization
@@ -24,6 +27,8 @@ public class ProceduralLevelGeneration : MonoBehaviour
     {
         difficulyLevel = 0;
         steps = -5;
+        platformInstantiated = new List<GameObject>();
+
         platformsDifficulty = new List<GameObject>[maxDifficulty + 1];
         for (int i = 0; i < maxDifficulty + 1; i++)
         {
@@ -37,7 +42,6 @@ public class ProceduralLevelGeneration : MonoBehaviour
                 int difTmp = platforms[i].GetComponent<Difficulty>().difficulty;
                
                 platformsDifficulty[difTmp].Add(platforms[i]);
-                print(i);
             }
         }
      //   UnityEngine.Random.seed = unchecked(DateTime.Now.Ticks.GetHashCode());
@@ -47,33 +51,41 @@ public class ProceduralLevelGeneration : MonoBehaviour
     void Update()
     {
         
-        if (camera != null)
+        if (arbiter != null)
         {
             if (steps < 0)
             {
-                steps += firstPlatform.GetComponent<BoxCollider2D>().size.y / 2;
+                steps += firstPlatform.GetComponent<BoxCollider2D>().size.y / 2 + 6;
+                platformInstantiated.Add(firstPlatform);
             }
-            else if (camera.transform.position.y >= steps - 15)
+            else if (arbiter.transform.position.y >= steps - 15)
             {
                 if (difficulyLevel < maxDifficulty)
                     difficulyLevel += DIFFICULTY_SETP;
-                print("Difficulty level:" + difficulyLevel);
 
                 List<GameObject> lstPlatform = platformsDifficulty[(int)Math.Truncate(difficulyLevel)];
                 if (instPlatform != null)
-                    steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2 + 2;
+                    steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2 + 3;
 
                 instPlatform = lstPlatform[UnityEngine.Random.Range(0, lstPlatform.Count)];
 
                 steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2;
                 float offset = instPlatform.GetComponent<BoxCollider2D>().offset.y;
 
-                Instantiate(instPlatform, new Vector3(0, (steps) - offset), new Quaternion(0, 0, 0, 0));
+                platformInstantiated.Add((GameObject) Instantiate(instPlatform, new Vector3(0, (steps) - offset), new Quaternion(0, 0, 0, 0)));
+
+                // Destruction of platform when under bottomTrigger of the arbiter
+                GameObject platformTmp = platformInstantiated[0];
+                if (platformTmp.transform.position.y < bottomTrigger.transform.position.y)
+                {
+                    platformInstantiated.Remove(platformTmp);
+                    Destroy(platformTmp);
+                }
             }
         }
         else
         {
-            print("YA WANNA HAVE A BAD TOM!?!");
+            print("No arbiter instance set in level generation");
         }
     }
 
