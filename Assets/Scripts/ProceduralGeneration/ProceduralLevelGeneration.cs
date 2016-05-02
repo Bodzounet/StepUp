@@ -15,19 +15,19 @@ public class ProceduralLevelGeneration : MonoBehaviour
     private float difficulyLevel;
     private float steps;
     private const float STEP_SIZE = 15;
-    private const float DIFFICULTY_SETP = 0.2f;
+    private const float DIFFICULTY_SETP = 1.0f;
     private GameObject instPlatform;
 
-    private List<GameObject>[] platformsDificulty; //[ [,] platformsDificulty;
+    private List<GameObject>[] platformsDifficulty; //[ [,] platformsDificulty;
     // Use this for initialization
     void Start()
     {
         difficulyLevel = 0;
         steps = -5;
-        platformsDificulty = new List<GameObject>[maxDifficulty];
-        for (int i = 0; i < maxDifficulty; i++)
+        platformsDifficulty = new List<GameObject>[maxDifficulty + 1];
+        for (int i = 0; i < maxDifficulty + 1; i++)
         {
-            platformsDificulty[i] = new List<GameObject>();
+            platformsDifficulty[i] = new List<GameObject>();
         }
       
         for (int i = 0; i < platforms.Length; i++)
@@ -36,7 +36,8 @@ public class ProceduralLevelGeneration : MonoBehaviour
             {
                 int difTmp = platforms[i].GetComponent<Difficulty>().difficulty;
                
-                platformsDificulty[difTmp].Add(platforms[i]);
+                platformsDifficulty[difTmp].Add(platforms[i]);
+                print(i);
             }
         }
      //   UnityEngine.Random.seed = unchecked(DateTime.Now.Ticks.GetHashCode());
@@ -54,11 +55,11 @@ public class ProceduralLevelGeneration : MonoBehaviour
             }
             else if (camera.transform.position.y >= steps - 15)
             {
-                if (difficulyLevel + DIFFICULTY_SETP < maxDifficulty)
+                if (difficulyLevel < maxDifficulty)
                     difficulyLevel += DIFFICULTY_SETP;
                 print("Difficulty level:" + difficulyLevel);
 
-                List<GameObject> lstPlatform = platformsDificulty[(int)Math.Truncate(difficulyLevel)];
+                List<GameObject> lstPlatform = platformsDifficulty[(int)Math.Truncate(difficulyLevel)];
                 if (instPlatform != null)
                     steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2 + 2;
 

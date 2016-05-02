@@ -313,8 +313,8 @@ public class Controller : MonoBehaviour
     {
         RaycastHit2D hit, hit2;
 
-        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
-        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, 1 << LayerMask.NameToLayer("Platform"));
+        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, (1 << LayerMask.NameToLayer("Platform")) | (1 << LayerMask.NameToLayer("PlatformHard")));
+        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, (1 << LayerMask.NameToLayer("Platform")) | (1 << LayerMask.NameToLayer("PlatformHard")));
 
         Grounded = hit.collider != null && hit2.collider == null;
     }
