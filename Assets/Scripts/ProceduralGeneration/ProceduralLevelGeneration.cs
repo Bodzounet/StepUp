@@ -9,12 +9,13 @@ public class ProceduralLevelGeneration : MonoBehaviour
     public GameObject[] platforms;
     public int maxDifficulty;
     public GameObject camera;
+    public GameObject firstPlatform;
 
 
     private float difficulyLevel;
     private float steps;
     private const float STEP_SIZE = 15;
-    private const float DIFFICULTY_SETP = 0.1f;
+    private const float DIFFICULTY_SETP = 0.2f;
     private GameObject instPlatform;
 
     private List<GameObject>[] platformsDificulty; //[ [,] platformsDificulty;
@@ -22,7 +23,7 @@ public class ProceduralLevelGeneration : MonoBehaviour
     void Start()
     {
         difficulyLevel = 0;
-        steps = -20;
+        steps = -5;
         platformsDificulty = new List<GameObject>[maxDifficulty];
         for (int i = 0; i < maxDifficulty; i++)
         {
@@ -47,7 +48,11 @@ public class ProceduralLevelGeneration : MonoBehaviour
         
         if (camera != null)
         {
-            if (camera.transform.position.y >= steps - 15)
+            if (steps < 0)
+            {
+                steps += firstPlatform.GetComponent<BoxCollider2D>().size.y / 2;
+            }
+            else if (camera.transform.position.y >= steps - 15)
             {
                 if (difficulyLevel + DIFFICULTY_SETP < maxDifficulty)
                     difficulyLevel += DIFFICULTY_SETP;
@@ -55,7 +60,7 @@ public class ProceduralLevelGeneration : MonoBehaviour
 
                 List<GameObject> lstPlatform = platformsDificulty[(int)Math.Truncate(difficulyLevel)];
                 if (instPlatform != null)
-                    steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2;
+                    steps += instPlatform.GetComponent<BoxCollider2D>().size.y / 2 + 2;
 
                 instPlatform = lstPlatform[UnityEngine.Random.Range(0, lstPlatform.Count)];
 
