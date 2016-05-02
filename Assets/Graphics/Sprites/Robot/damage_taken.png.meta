@@ -1,0 +1,219 @@
+fileFormatVersion: 2
+guid: 5d5f43f30448bac40bebe7c0a6f868cc
+timeCreated: 1461491053
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: damage_taken_0
+    21300002: damage_taken_1
+    21300004: damage_taken_2
+    21300006: damage_taken_3
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: damage_taken_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -16, y: 60}
+        - {x: -20, y: 54}
+        - {x: -21, y: 50}
+        - {x: -24, y: 45}
+        - {x: -24, y: 30}
+        - {x: -18, y: 3}
+        - {x: -10, y: 0}
+        - {x: 10, y: 0}
+        - {x: 13, y: 6}
+        - {x: 17, y: 27}
+        - {x: 17, y: 60}
+      - - {x: 17, y: 51}
+        - {x: 15, y: 49}
+        - {x: 15, y: 46}
+        - {x: 17, y: 44}
+        - {x: 20, y: 44}
+        - {x: 22, y: 46}
+        - {x: 22, y: 49}
+        - {x: 20, y: 51}
+    - name: damage_taken_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 6, y: 58}
+        - {x: -11, y: 58}
+        - {x: -24, y: 43}
+        - {x: -24, y: 30}
+        - {x: -18, y: 3}
+        - {x: -10, y: 0}
+        - {x: 10, y: 0}
+        - {x: 13, y: 6}
+        - {x: 16, y: 17}
+        - {x: 16, y: 50}
+      - - {x: 22, y: 50}
+        - {x: 19, y: 47}
+        - {x: 19, y: 46}
+        - {x: 22, y: 43}
+        - {x: 23, y: 43}
+        - {x: 26, y: 46}
+        - {x: 26, y: 47}
+        - {x: 23, y: 50}
+      - - {x: -22, y: 59}
+        - {x: -22, y: 52}
+        - {x: -17, y: 52}
+        - {x: -15, y: 53}
+        - {x: -15, y: 59}
+      - - {x: 16, y: 63}
+        - {x: 13, y: 60}
+        - {x: 13, y: 57}
+        - {x: 16, y: 54}
+        - {x: 19, y: 54}
+        - {x: 22, y: 57}
+        - {x: 22, y: 60}
+        - {x: 19, y: 63}
+    - name: damage_taken_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 6, y: 58}
+        - {x: -11, y: 58}
+        - {x: -24, y: 43}
+        - {x: -24, y: 30}
+        - {x: -18, y: 3}
+        - {x: -10, y: 0}
+        - {x: 10, y: 0}
+        - {x: 13, y: 6}
+        - {x: 16, y: 17}
+        - {x: 16, y: 50}
+      - - {x: 25, y: 48}
+        - {x: 23, y: 46}
+        - {x: 23, y: 43}
+        - {x: 25, y: 41}
+        - {x: 28, y: 41}
+        - {x: 30, y: 43}
+        - {x: 30, y: 46}
+        - {x: 28, y: 48}
+      - - {x: -26, y: 56}
+        - {x: -25, y: 53}
+        - {x: -21, y: 53}
+        - {x: -19, y: 54}
+        - {x: -19, y: 57}
+        - {x: -21, y: 60}
+        - {x: -23, y: 60}
+        - {x: -26, y: 57}
+      - - {x: 20, y: 64}
+        - {x: 18, y: 62}
+        - {x: 18, y: 57}
+        - {x: 20, y: 55}
+        - {x: 25, y: 55}
+        - {x: 27, y: 57}
+        - {x: 27, y: 62}
+        - {x: 25, y: 64}
+    - name: damage_taken_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: 6, y: 58}
+        - {x: -11, y: 58}
+        - {x: -24, y: 43}
+        - {x: -24, y: 30}
+        - {x: -18, y: 3}
+        - {x: -10, y: 0}
+        - {x: 10, y: 0}
+        - {x: 13, y: 6}
+        - {x: 16, y: 17}
+        - {x: 16, y: 50}
+      - - {x: 28, y: 46}
+        - {x: 25, y: 43}
+        - {x: 25, y: 42}
+        - {x: 28, y: 39}
+        - {x: 29, y: 39}
+        - {x: 32, y: 42}
+        - {x: 32, y: 43}
+        - {x: 29, y: 46}
+      - - {x: -29, y: 61}
+        - {x: -29, y: 54}
+        - {x: -22, y: 54}
+        - {x: -22, y: 61}
+      - - {x: 25, y: 64}
+        - {x: 22, y: 61}
+        - {x: 22, y: 58}
+        - {x: 25, y: 55}
+        - {x: 28, y: 55}
+        - {x: 31, y: 58}
+        - {x: 31, y: 61}
+        - {x: 28, y: 64}
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
