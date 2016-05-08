@@ -7,6 +7,7 @@ public class ProceduralLevelGeneration : MonoBehaviour
 {
 
     public GameObject[] platforms;
+    public GameObject[] specialPlatforms;
     public int maxDifficulty;
     public GameObject arbiter;
     public GameObject bottomTrigger;
@@ -73,6 +74,13 @@ public class ProceduralLevelGeneration : MonoBehaviour
                 float offset = instPlatform.GetComponent<BoxCollider2D>().offset.y;
 
                 platformInstantiated.Add((GameObject) Instantiate(instPlatform, new Vector3(0, (steps) - offset), new Quaternion(0, 0, 0, 0)));
+
+                int platformType = UnityEngine.Random.Range(0, specialPlatforms.Length * 5);
+                if (platformType < specialPlatforms.Length)
+                {
+                    int side = UnityEngine.Random.Range(0, 3);
+                    platformInstantiated.Add((GameObject)Instantiate(specialPlatforms[platformType], new Vector3(side == 0 ? -10 : 10, (steps) - offset + side), new Quaternion(0, 0, 0, 0)));
+                }
 
                 // Destruction of platform when under bottomTrigger of the arbiter
                 GameObject platformTmp = platformInstantiated[0];
