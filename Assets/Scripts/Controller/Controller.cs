@@ -7,8 +7,11 @@ using System.Linq;
 public class Controller : MonoBehaviour
 {
     public delegate void OnStunDelegate();
+    public delegate void OnInvulnerableDelegate();
     public event OnStunDelegate OnStun;
     public event OnStunDelegate OnEndStun;
+    public event OnInvulnerableDelegate OnStartBeingInvulnerable;
+    public event OnInvulnerableDelegate OnEndBeingInvulnerable;
 
     #region variables & properties
 
@@ -147,6 +150,34 @@ public class Controller : MonoBehaviour
         set { _dashRecoverTime = value; }
     }
 
+    private bool _invulnerable = false;
+    public bool Invulnerable
+    {
+        get { return _invulnerable; }
+        private set 
+        {
+            _invulnerable = value; 
+            if (value && OnStartBeingInvulnerable != null)
+            {
+                OnStartBeingInvulnerable();
+            }
+            else if (OnEndBeingInvulnerable != null)
+            {
+                OnEndBeingInvulnerable();
+            }
+        }
+    }
+
+    public float InvulnerabilityDuration
+    {
+        set 
+        {
+            _invulnerable = true;
+            CancelInvoke("EndInvulnerability");
+            Invoke("EndInvulnerability", value);
+        }
+    }
+
     private bool _canDash = true;
 
     public int playerNumber;
@@ -170,6 +201,8 @@ public class Controller : MonoBehaviour
     {
         get { return _jsm; }
     }
+
+    private Items.Inventory _inventory;
 
     [SerializeField]
     private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright, center
@@ -207,6 +240,8 @@ public class Controller : MonoBehaviour
 
         _transform = this.GetComponent<Transform>();
         _anim = this.GetComponent<Animator>();
+
+        _inventory = this.GetComponent<Items.Inventory>();
     }
 
     void Start()
@@ -218,6 +253,9 @@ public class Controller : MonoBehaviour
 
     void Update()
     {
+        if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.X))
+            _inventory.UseItem();
+
         if (!_stunned && !_dashing)
         {
             xVel = _jsm.GetAxisClamped(JoyStickManager.e_XBoxControllerAxis.Horizontal) * _lateralSpeed;
@@ -272,7 +310,7 @@ public class Controller : MonoBehaviour
 
     #endregion
 
-    #region Coroutines
+    #region Coroutines & Invoke
 
     private IEnumerator Co_Dash(int direction)
     {
@@ -305,6 +343,11 @@ public class Controller : MonoBehaviour
         _stunned = false;
     }
 
+    private void EndInvulnerability()
+    {
+        _invulnerable = false;
+    }
+
     #endregion
 
     #region helpers
@@ -325,7 +368,7 @@ public class Controller : MonoBehaviour
 
     public void Stun(float duration)
     {
-        if (_dashing)
+        if (_dashing || _invulnerable)
             return;
         StartCoroutine("Co_Stun", duration);
     }
@@ -336,7 +379,7 @@ public class Controller : MonoBehaviour
     /// <param name="direction"></param>
     public void Push(Vector2 direction)
     {
-        if (_dashing)
+        if (_dashing || _invulnerable)
             return;
         xVel = direction.x;
         yVel = direction.y;
@@ -352,6 +395,7 @@ public class Controller : MonoBehaviour
         DashVelocity = _baseDashVelocity;
         JumpSpeed = _baseJumpSpeed;
         LateralSpeed = _baseLateralSpeed;
+        Invulnerable = false;
 
         MaxJumpCharges = 2;
 
