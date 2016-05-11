@@ -18,8 +18,7 @@ public class UI_PlayerInfo : MonoBehaviour
         _managedPlayer = GameObject.FindObjectsOfType<Controller>().Where(x => x.playerNumber == playerIdToManage).Single().gameObject;
 
         _managedPlayer.GetComponent<Items.Inventory>().onItemIsSet += OnItemChange;
-
-        //var tmp = _managedPlayer.GetComponent<SpriteRenderer>();
+        _managedPlayer.GetComponent<DeathManager>().OnLifeNumberChange += OnLifeChange;
 
         SpriteRenderer sr = _managedPlayer.GetComponent<SpriteRenderer>();
         playerSprite.sprite = sr.sprite;
@@ -32,7 +31,7 @@ public class UI_PlayerInfo : MonoBehaviour
     {
         for (int i = 0; i < lifes.Length; i++)
         {
-            lifes[i].SetActive(i < remainingLifes);
+            lifes[lifes.Length - i - 1].SetActive(i < remainingLifes);
         }
     }
 
