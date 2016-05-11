@@ -130,6 +130,8 @@ public class Attacks : MonoBehaviour
 
     #endregion
 
+    public GameObject StrongEffectFx;
+
     public void ResetAttacks()
     {
         _chargingStrongHit = false;
@@ -243,6 +245,11 @@ public class Attacks : MonoBehaviour
         _chargingStrongHit = false;
 
         float radius = _strongAttackRadius * (1 + chargePercentage * _strongAttackFullChargeRadiusIncrease);
+
+        var fx = GameObject.Instantiate(StrongEffectFx, transform.position, Quaternion.identity) as GameObject;
+        fx.transform.localScale = new Vector3(1.5f * radius, 1.5f * radius, 1);
+
+
 
         foreach (var v in Physics2D.OverlapCircleAll(transform.position, radius, 1 << LayerMask.NameToLayer("Player")))
         {

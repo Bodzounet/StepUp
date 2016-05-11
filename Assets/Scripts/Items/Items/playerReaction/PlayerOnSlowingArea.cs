@@ -57,8 +57,6 @@ namespace Items
             if (_controller.Invulnerable || col.tag != "SlowingArea" || col.GetComponent<Items.BaseItem>().User == this.gameObject)
                 return;
 
-            Debug.Log("zizi");
-
             _affected = true;
             _controller.LateralSpeed *= SlowingArea.decreasingSpeedFactor;
         }

@@ -17,6 +17,8 @@ public class UI_PlayerInfo : MonoBehaviour
 
     public void ResetPlayerInfo()
     {
+        Debug.Log(playerIdToManage);
+
         _managedPlayer = GameObject.FindObjectsOfType<Controller>().Where(x => x.playerNumber == playerIdToManage).Single().gameObject;
 
         _managedPlayer.GetComponent<Items.Inventory>().onItemIsSet += OnItemChange;
