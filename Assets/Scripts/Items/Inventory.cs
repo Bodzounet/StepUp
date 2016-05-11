@@ -29,7 +29,7 @@ namespace Items
 
         public void PickSpecificItem(GameObject item)
         {
-            _item = item;
+            Item = item;
         }
 
         public void PickItem()
@@ -44,40 +44,40 @@ namespace Items
         {
             if (_item == null)
             {
-                _item = _itemManager.PickRandomItem();
+                Item = _itemManager.PickRandomItem();
             }
             else
             {
-                _item = _itemManager.UpgradeItem(_item);
+                Item = _itemManager.UpgradeItem(Item);
             }
         }
 
         private void PickNotSoRandomItem()
         {
-            if (_item == null)
+            if (Item == null)
             {
-                _item = _itemManager.PickNotSoRandomItem();
+                Item = _itemManager.PickNotSoRandomItem();
             }
             else
             {
-                _item = _itemManager.UpgradeItem(_item);
+                Item = _itemManager.UpgradeItem(Item);
             }
         }
 
         public void UseItem()
         {
-            if (_item == null)
+            if (Item == null)
                 return;
 
             var item = GameObject.Instantiate<GameObject>(_item);
-            item.name = _item.name;
+            item.name = Item.name;
             item.transform.position = transform.position;
 
             var baseItem = item.GetComponent<Items.BaseItem>();
             baseItem.User = this.gameObject;
             baseItem.DoAction();
 
-            _item = null;
+            Item = null;
         }
     }
 }

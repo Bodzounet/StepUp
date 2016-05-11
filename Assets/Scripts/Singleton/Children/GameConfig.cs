@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class GameConfig : Singleton<GameConfig>
 {
-    private List<int> _players;
+    private List<int> _players = new List<int>();
     public List<int> Players
     {
         get { return _players; }
@@ -13,6 +13,6 @@ public class GameConfig : Singleton<GameConfig>
 
     public void ResetGameConfig()
     {
-        _players = null;
+        _players.Clear();
     }
 }
