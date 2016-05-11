@@ -26,6 +26,8 @@ public class ProceduralLevelGeneration : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        UnityEngine.Random.seed = System.DateTime.Now.Millisecond;
+
         difficulyLevel = 0;
         steps = -5;
         platformInstantiated = new List<GameObject>();
@@ -76,7 +78,7 @@ public class ProceduralLevelGeneration : MonoBehaviour
                 platformInstantiated.Add((GameObject) Instantiate(instPlatform, new Vector3(0, (steps) - offset), new Quaternion(0, 0, 0, 0)));
 
                 
-                if (UnityEngine.Random.Range(0, 100) < 20)
+                if (UnityEngine.Random.Range(0, 100) < 99)
                 {
                     int side = UnityEngine.Random.Range(0, 3);
                     int platformType = UnityEngine.Random.Range(0, specialPlatforms.Length);

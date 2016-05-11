@@ -4,7 +4,12 @@ using System.Collections;
 public class DeathManager : MonoBehaviour 
 {
     public delegate void LifeNumberChange(int newLifeNumber);
+    public delegate void Death();
+    public delegate void Win(GameObject go);
+
     public event LifeNumberChange OnLifeNumberChange;
+    public event Death OnDeath;
+    public event Win OnWin;
 
     private int _lifes = 3;
     public int Lifes
@@ -23,6 +28,8 @@ public class DeathManager : MonoBehaviour
     private void Die()
     {
         this.gameObject.SetActive(false);
+        if (OnDeath != null)
+            OnDeath();
     }
 
     private void Respawn()
@@ -41,9 +48,10 @@ public class DeathManager : MonoBehaviour
         }
     }
 
-    private void Win()
+    public void Wins()
     {
-
+        if (OnWin != null)
+            OnWin(this.gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D col)

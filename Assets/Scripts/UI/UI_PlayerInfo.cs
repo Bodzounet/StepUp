@@ -5,6 +5,8 @@ using System.Linq;
 
 public class UI_PlayerInfo : MonoBehaviour 
 {
+    public Sprite noItem;
+
     public Image playerSprite;
     public Image itemSprite;
     public GameObject[] lifes;
@@ -39,7 +41,7 @@ public class UI_PlayerInfo : MonoBehaviour
     {
         if (go == null)
         {
-
+            itemSprite.sprite = noItem;
         }
         else
         {
