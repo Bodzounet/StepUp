@@ -1,12 +1,13 @@
 fileFormatVersion: 2
 guid: 9535f84cb4e07a34885204360c77d7f4
-timeCreated: 1460968713
+timeCreated: 1462782009
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: front_attack_0
     21300002: front_attack_1
     21300004: front_attack_2
+    21300006: front_attack_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -64,17 +65,17 @@ TextureImporter:
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline:
-      - - {x: 3, y: 58}
-        - {x: -11, y: 58}
-        - {x: -13, y: 56}
+      - - {x: -5, y: 58}
+        - {x: -10, y: 58}
+        - {x: -12, y: 56}
         - {x: -24, y: 43}
         - {x: -24, y: 30}
         - {x: -18, y: 3}
-        - {x: -10, y: 0}
-        - {x: 12, y: 0}
-        - {x: 23, y: 19}
-        - {x: 23, y: 45}
-        - {x: 22, y: 49}
+        - {x: -12, y: 0}
+        - {x: 13, y: 0}
+        - {x: 18, y: 22}
+        - {x: 18, y: 50}
+        - {x: 11, y: 55}
     - name: front_attack_1
       rect:
         serializedVersion: 2
@@ -88,17 +89,37 @@ TextureImporter:
       outline:
       - - {x: -12, y: 58}
         - {x: -24, y: 46}
-        - {x: -24, y: 24}
-        - {x: -23, y: 20}
+        - {x: -24, y: 23}
+        - {x: -18, y: 3}
         - {x: -10, y: 0}
-        - {x: 10, y: 0}
+        - {x: 13, y: 0}
         - {x: 27, y: 19}
-        - {x: 27, y: 47}
+        - {x: 27, y: 46}
         - {x: 7, y: 58}
     - name: front_attack_2
       rect:
         serializedVersion: 2
         x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -12, y: 58}
+        - {x: -24, y: 46}
+        - {x: -24, y: 23}
+        - {x: -18, y: 3}
+        - {x: -10, y: 0}
+        - {x: 12, y: 0}
+        - {x: 27, y: 21}
+        - {x: 27, y: 47}
+        - {x: 7, y: 58}
+    - name: front_attack_3
+      rect:
+        serializedVersion: 2
+        x: 192
         y: 0
         width: 64
         height: 64

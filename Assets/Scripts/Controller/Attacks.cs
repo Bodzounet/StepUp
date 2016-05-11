@@ -116,78 +116,27 @@ public class Attacks : MonoBehaviour
         set { _lightAttackStunDuration = value; }
     }
 
-    /// <summary>
-    /// the recover time in addition of the strong attack animation.
-    /// </summary>
-    [SerializeField]
-    private float _baseStrongAttackRecoverTime = 0.25f;
-    public float BaseStrongAttackRecoverTime
-    {
-        get { return _baseStrongAttackRecoverTime; }
-    }
-
-    private float _strongAttackRecoverTime;
-    public float StrongAttackRecoverTime
-    {
-        get { return _strongAttackRecoverTime; }
-        set { _strongAttackRecoverTime = value; }
-    }
-    
-    [SerializeField]
-    private float _baseStrongAttackCooldown = 7.5f;
-    public float BaseStrongAttackCooldown
-    {
-        get { return _baseStrongAttackCooldown; }
-    }
-
-    private float _strongAttackCooldown;
-    public float StrongAttackCooldown
-    {
-        get { return _strongAttackCooldown; }
-        set { _strongAttackCooldown = value; }
-    }
-
-    [SerializeField]
-    private float _baseLightAttackCooldwon = 3.5f;
-    public float BaseLightAttackCooldwon
-    {
-        get { return _baseLightAttackCooldwon; }
-    }
-
-    private float _lightAttackCooldown;
-    public float LightAttackCooldown
-    {
-        get { return _lightAttackCooldown; }
-        set { _lightAttackCooldown = value; }
-    }
-
     private bool _chargingStrongHit = false;
-    private bool _usingLightHit = false;
     private float _startChargingTime;
 
-    private bool _cdLightHit = false;
-    private bool _cdStrongHit = false;
+    private bool _attacksBlocked;
+    public bool AttackBlocked
+    {
+        get { return (_attacksBlocked); }
+        set { _attacksBlocked = value; }
+    }
 
     private Controller _controller;
-
-    [SerializeField]
-    private GameObject[] _lightHits; // up, front, down;
 
     #endregion
 
     public void ResetAttacks()
     {
         _chargingStrongHit = false;
-        _usingLightHit = false;
-        _cdLightHit = false;
-        _cdLightHit = false;
 
-        LightAttackCooldown = _baseLightAttackCooldwon;
         LightAttackStunDuration = _baseLightAttackStunDuration;
         MaxStunDuration = _baseMaxStunDuration;
-        StrongAttackRecoverTime = _baseStrongAttackRecoverTime;
         StrongAttackChargeDelay = _baseStrongAttackChargeDelay;
-        StrongAttackCooldown = _baseStrongAttackCooldown;
         StrongAttackFullChargeRadiusIncrease = _baseStrongAttackFullChargeRadiusIncrease;
         StrongAttackRadius = _baseStrongAttackRadius;
         SubRadius100percentStun = _baseSubRadius100percentStun;
@@ -209,16 +158,17 @@ public class Attacks : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log(_controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT));
-
         // start charging strong attack
-        if (!_chargingStrongHit && !_cdStrongHit && _controller.Grounded && !_controller.Stunned && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LT))
+        if (!_attacksBlocked && _controller.Grounded && !_controller.Stunned && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LT))
         {
+            _attacksBlocked = true;
+            _controller.MovementBlocked = true;
+            _controller.JumpBlocked = true;
             _startChargingTime = Time.time;
             StartCoroutine("Co_StrongHit");
         }
 
-        // unleash string attack
+        // unleash strong attack
         if ((_chargingStrongHit && _controller.Jsm.GetButtonUp(JoyStickManager.e_XBoxControllerButtons.LT)) /*|| _controller.IsMoving*/)
         {
             StopCoroutine("Co_StrongHit");
@@ -226,27 +176,28 @@ public class Attacks : MonoBehaviour
         }
 
         // use light attack
-        if (!_usingLightHit && !_cdLightHit && !_chargingStrongHit && !_controller.Stunned && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT))
+        if (!_attacksBlocked && !_controller.Stunned && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RT))
         {
-            _usingLightHit = true;
+            _attacksBlocked = true;
+            _controller.JumpBlocked = true;
+            if (_controller.Grounded)
+            {
+                _controller.MovementBlocked = true;
+            }
             float angle = _controller.Jsm.GetAxisAngle();
 
             if (angle > 45 && angle < 135)
             {
-                _lightHits[0].SetActive(true);
                 _controller.Anim.Play("Up_Attack");
             }
             else if (angle < -45 && angle > -135)
             {
-                _lightHits[2].SetActive(true);
                 _controller.Anim.Play("Down_Attack");
             }
             else
             {
-                _lightHits[1].SetActive(true);
                 _controller.Anim.Play("Front_Attack");
             }
-            StartCD(e_AttackType.LIGHT);
         }
     }
 
@@ -269,8 +220,16 @@ public class Attacks : MonoBehaviour
     {
         // recover time ?
         // anim.Play("landing");
-        _usingLightHit = false;
-        _lightHits[id].SetActive(false);
+        _attacksBlocked = false;
+        _controller.JumpBlocked = false;
+        _controller.MovementBlocked = false;
+    }
+
+    public void StrongHitIsOver()
+    {
+        _attacksBlocked = false;
+        _controller.JumpBlocked = false;
+        _controller.MovementBlocked = false;
     }
 
     /// <summary>
@@ -281,7 +240,6 @@ public class Attacks : MonoBehaviour
     void StrongHit(float chargePercentage)
     {
         _controller.Anim.Play("Strong_Attack");
-        StartCD(e_AttackType.STRONG);
         _chargingStrongHit = false;
 
         float radius = _strongAttackRadius * (1 + chargePercentage * _strongAttackFullChargeRadiusIncrease);
@@ -308,40 +266,6 @@ public class Attacks : MonoBehaviour
             targetController.Stun(_maxStunDuration * percentStun);
             targetController.Push((v.transform.position - transform.position).normalized * 10);
         }
-
-        // recover time, pour "punir" en cas d'échec
-
-        _controller.Stun(_strongAttackRecoverTime);
-    }
-
-    void StartCD(e_AttackType at)
-    {
-        switch (at)
-        {
-            case e_AttackType.LIGHT:
-                StopCoroutine("Co_CDLightHit");
-                StartCoroutine("Co_CDLightHit");
-                break;
-            case e_AttackType.STRONG:
-                StopCoroutine("Co_CDStrongHit");
-                StartCoroutine("Co_CDStrongHit");
-                break;
-        }
-    }
-
-    void FinishCD(e_AttackType at)
-    {
-        switch (at)
-        {
-            case e_AttackType.LIGHT:
-                StopCoroutine("Co_CDLightHit");
-                _cdLightHit = false;
-                break;
-            case e_AttackType.STRONG:
-                StopCoroutine("Co_CDStrongHit");
-                _cdStrongHit = false;
-                break;
-        }
     }
 
     public IEnumerator Co_StrongHit()
@@ -352,33 +276,14 @@ public class Attacks : MonoBehaviour
         StrongHit(1);
     }
 
-    public IEnumerator Co_CDLightHit()
-    {
-        _cdLightHit = true;
-        yield return new WaitForSeconds(LightAttackCooldown);
-        _cdLightHit = false;
-    }
-
-    public IEnumerator Co_CDStrongHit()
-    {
-        _cdStrongHit = true;
-        yield return new WaitForSeconds(StrongAttackCooldown);
-        _cdStrongHit = false;
-    }
-
     public void OnStun()
     {
         _chargingStrongHit = false;
         StopCoroutine("Co_StrongHit");
-        if (_chargingStrongHit)
-        {
-            StartCD(e_AttackType.STRONG);
-        }
     }
 
     public void OnEndStun()
     {
-        _usingLightHit = false;
         _chargingStrongHit = false;
     }
 }

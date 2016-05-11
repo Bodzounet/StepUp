@@ -102,6 +102,13 @@ public class JoyStickManager : MonoBehaviour
         return Input.GetButtonDown(_givenNameToButton[btn]);
     }
 
+    public bool GetButton(e_XBoxControllerButtons btn)
+    {
+        if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
+            return Input.GetAxis(_givenNameToButton[btn]) != 0;
+        return Input.GetButton(_givenNameToButton[btn]);
+    }
+
     public bool GetButtonUp(e_XBoxControllerButtons btn)
     {
         if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
