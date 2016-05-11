@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Items
 {
     public class PlayerOnInvertedControlArea : MonoBehaviour
     {
-        bool _affected = false;
 
+        bool _affected = false;
         Controller _controller;
+
+        int _multizone = 0;
 
         void Awake()
         {
@@ -17,33 +20,41 @@ namespace Items
 
         void OnTriggerEnter2D(Collider2D col)
         {
-            if (_controller.Invulnerable || col.tag != "InvertedControlsArea" || col.GetComponent<Items.BaseItem>().User == this.gameObject)
-                return;
-
-            _affected = true;
-            _controller.LateralSpeed *= -1;
+            if (col.tag == "InvertedControlsAreaStart")
+            {
+                _multizone++;
+            }
         }
 
         void OnTriggerStay2D(Collider2D col)
         {
             if (!_affected)
             {
-                if (_controller.Invulnerable || col.tag != "InvertedControlsArea" || col.GetComponent<Items.BaseItem>().User == this.gameObject)
+                if (_controller.Invulnerable || col.tag != "InvertedControlsAreaStart" || col.GetComponentInParent<Items.BaseItem>().User == this.gameObject)
                     return;
 
-                _affected = true;
-                _controller.LateralSpeed *= -1;
+                SwitchInvertedControls();
             }
         }
 
         void OnTriggerExit2D(Collider2D col)
         {
-            if (col.tag != "InvertedControlsArea")
+            OnTriggerExit2DLogic(col.gameObject);
+        }
+
+        public void OnTriggerExit2DLogic(GameObject go)
+        {
+            if (go.tag == "InvertedControlsAreaStart")
+            {
+                _multizone--;
+            }
+
+            if (go.tag != "InvertedControlsAreaEnd" || _multizone > 0)
                 return;
 
             if (_affected)
             {
-                Invoke("EndInvertedCOntrols", 1);
+                SwitchInvertedControls();
             }
         }
 
@@ -51,18 +62,13 @@ namespace Items
         {
             if (_affected)
             {
-                EndInvertedControls();
+                SwitchInvertedControls();
             }
         }
 
-        private void OnInvulnerabilityEnds()
-        {
-
-        }
-
-        private void EndInvertedControls()
-        {
-            _affected = false;
+        private void SwitchInvertedControls()
+        {   
+            _affected = !_affected;
             _controller.LateralSpeed *= -1;
         }
     }

@@ -5,7 +5,7 @@ namespace Items
 {
     public abstract class BaseItem : MonoBehaviour
     {
-        private GameObject _user;
+        private GameObject _user = null;
         public GameObject User
         {
             get { return _user; }

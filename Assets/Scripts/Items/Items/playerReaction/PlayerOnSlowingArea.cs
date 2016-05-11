@@ -15,11 +15,6 @@ namespace Items
             _controller.OnStartBeingInvulnerable += OnInvulnerabilityStarts;
         }
 
-        void OnTriggerEnter2D(Collider2D col)
-        {
-            StartSlowing(col);
-        }
-
         void OnTriggerStay2D(Collider2D col)
         {
             if (!_affected)
@@ -30,7 +25,12 @@ namespace Items
 
         void OnTriggerExit2D(Collider2D col)
         {
-            if (col.tag != "SlowingArea")
+            OnTriggerExit2DLogic(col.gameObject);
+        }
+
+        public void OnTriggerExit2DLogic(GameObject go)
+        {
+            if (go.tag != "SlowingArea")
                 return;
 
             if (_affected)
@@ -57,14 +57,16 @@ namespace Items
             if (_controller.Invulnerable || col.tag != "SlowingArea" || col.GetComponent<Items.BaseItem>().User == this.gameObject)
                 return;
 
+            Debug.Log("zizi");
+
             _affected = true;
-            _controller.LateralSpeed /= SlowingArea.decreasingSpeedFactor;
+            _controller.LateralSpeed *= SlowingArea.decreasingSpeedFactor;
         }
 
         private void EndSlowing()
         {
             _affected = false;
-            _controller.LateralSpeed *= SlowingArea.decreasingSpeedFactor;
+            _controller.LateralSpeed /= SlowingArea.decreasingSpeedFactor;
         }
     }
 }

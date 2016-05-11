@@ -1,33 +1,39 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class Multiplayer_menu : MonoBehaviour {
-    private Dictionary<int, string> _startsBtn = new Dictionary<int, string>() {{ 1, "Start1"}, { 2, "Start2"}, { 3, "Start3"}, { 4, "Start4"}};
-    private List<int>               _connectedPlayer = new List<int>() { };
+    private Dictionary<int, string> _startsBtn;
+    private List<int>               _connectedPlayers;
 
-    private void AddCotroller(int id)
+    private void AddController(int id)
     {
-        _connectedPlayer.Add(id);
+        _connectedPlayers.Add(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Connected";
     }
 
-    private void RemoveCotroller(int id)
+    private void RemoveController(int id)
     {
-        _connectedPlayer.Remove(id);
+        _connectedPlayers.Remove(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Press Start...";
     }
 
-    // Update is called once per frame
+    void Start ()
+    {
+        _startsBtn = new Dictionary<int, string>() { { 1, "Start1" }, { 2, "Start2" }, { 3, "Start3" }, { 4, "Start4" } };
+        _connectedPlayers = new List<int>() { };
+    }
+
     void Update () {
         foreach (KeyValuePair<int, string> entry in _startsBtn)
             if (Input.GetButtonDown(entry.Value))
             {
-                if (!_connectedPlayer.Exists(x => x == entry.Key))
-                    AddCotroller(entry.Key);
+                if (!_connectedPlayers.Exists(x => x == entry.Key))
+                    AddController(entry.Key);
                 else
-                    RemoveCotroller(entry.Key);
+                    RemoveController(entry.Key);
             }
 
         //GameObject.Find("PanelMultiplayer/Play").SetActive(_connectedPlayer.Count >= 2);
@@ -35,7 +41,9 @@ public class Multiplayer_menu : MonoBehaviour {
 
     public void launchTheGame()
     {
-        if (_connectedPlayer.Count < 2)
+        if (_connectedPlayers.Count < 1)
             return;
+        GameConfig.Instance.Players = _connectedPlayers;
+        SceneManager.LoadScene("Level");
     }
 }

@@ -9,8 +9,15 @@ namespace Items
 
         public override void DoAction()
         {
+            var previousShield = User.GetComponentInChildren<Shield>();
+            if (previousShield != null)
+            {
+                Destroy(previousShield.gameObject);
+            }
+
             transform.parent = User.transform;
-            transform.localPosition = Vector3.zero;
+            transform.localPosition = new Vector3(-0.003f, 0.297f, 0f);
+            transform.localScale *= transform.parent.localScale.x;
 
             var userController = User.GetComponent<Controller>();
 
@@ -22,6 +29,18 @@ namespace Items
         {
             User.GetComponent<Controller>().OnEndBeingInvulnerable -= OnInvulnerabilityEnds;
             Destroy(this.gameObject);
+        }
+
+        protected void OnDestroy()
+        {
+            try
+            {
+                User.GetComponent<Controller>().OnEndBeingInvulnerable -= OnInvulnerabilityEnds;
+            }
+            catch
+            {
+                // osef, quitting
+            }
         }
     }
 }

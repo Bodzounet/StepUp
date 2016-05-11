@@ -7,14 +7,17 @@ namespace Items
     {
         private void OnTriggerEnter2D(Collider2D col)
         {
-            if (col.tag == "" || col.tag == "")
+            Debug.Log(col.name);
+            //Debug.Log(col.transform.root.tag);
+
+            if (col.tag == "SlowingArea" || col.tag == "InvertedControlsAreaStart")
             {
                 if (User.GetComponent<Inventory>().Item == null)
                 {
-                    User.GetComponent<Inventory>().PickSpecificItem(GameObject.FindObjectOfType<ItemManager>().PickSpecificItem(col.name));
+                    User.GetComponent<Inventory>().PickSpecificItem(GameObject.FindObjectOfType<ItemManager>().PickSpecificItem(col.transform.root.name));
                 }
 
-                Destroy(col.gameObject);
+                Destroy(col.transform.root.gameObject);
 
                 var UserController = User.GetComponent<Controller>();
 

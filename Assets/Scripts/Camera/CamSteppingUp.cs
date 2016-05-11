@@ -6,14 +6,9 @@ public class CamSteppingUp : MonoBehaviour
 {
     [SerializeField]
     private Transform _arbiterTransform;
-    private float time;
-    Vector3 velo;
 
-    // Use this for initialization
     void Start()
     {
-        time = 0.3f;
-        velo = Vector3.zero;
     }
 
     void OnTriggerEnter2D(Collider2D other)

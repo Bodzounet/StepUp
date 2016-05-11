@@ -43,6 +43,20 @@ public class Controller : MonoBehaviour
         set { _jumpSpeed = value; }
     }
 
+    [SerializeField]
+    private float _baseJumpVariationTime = 1f;
+    public float BaseJumpVariationTime
+    {
+        get { return _baseJumpVariationTime; }
+    }
+
+    private float _jumpVariationTime = 1f;
+    public float JumpVariationTime
+    {
+        get { return _jumpVariationTime; }
+        set { _jumpVariationTime = value; }
+    }
+
     private bool _grounded;
     public bool Grounded
     {
@@ -71,7 +85,7 @@ public class Controller : MonoBehaviour
         set 
         {
             _stunned = value;
-            if (value)
+            if (_stunned)
             {
                 if (OnStun != null)
                 {
@@ -108,13 +122,13 @@ public class Controller : MonoBehaviour
         set { _dashing = value; }
     }
 
+    [SerializeField]
     private float _baseDashDuration = 1f;
     public float BaseDashDuration
     {
         get { return _baseDashDuration; }
     }
 
-    [SerializeField]
     private float _dashDuration;
     public float DashDuration
     {
@@ -122,13 +136,13 @@ public class Controller : MonoBehaviour
         set { _dashDuration = value; }
     }
 
+    [SerializeField]
     private float _baseDashVelocity = 30f;
     public float BaseDashVelocity
     {
         get { return _baseDashVelocity; }
     }
 
-    [SerializeField]
     private float _dashVelocity;
     public float DashVelocity
     {
@@ -172,7 +186,7 @@ public class Controller : MonoBehaviour
     {
         set 
         {
-            _invulnerable = true;
+            Invulnerable = true;
             CancelInvoke("EndInvulnerability");
             Invoke("EndInvulnerability", value);
         }
@@ -204,6 +218,8 @@ public class Controller : MonoBehaviour
 
     private Items.Inventory _inventory;
 
+    private Attacks _attacks;
+
     [SerializeField]
     private Transform[] ItemCorner; // in this order : topleft, topright, bottomleft, bottomright, center
 
@@ -223,6 +239,27 @@ public class Controller : MonoBehaviour
         }
     }
 
+    private bool _movementBlocked;
+    public bool MovementBlocked
+    {
+        get { return (_movementBlocked); }
+        set { _movementBlocked = value; }
+    }
+
+    private bool _movementSlowed;
+    public bool MovementSlowed
+    {
+        get { return (_movementSlowed); }
+        set { _movementSlowed = value; }
+    }
+
+    private bool _jumpBlocked;
+    public bool JumpBlocked
+    {
+        get { return (_jumpBlocked); }
+        set { _jumpBlocked = value; }
+    }
+
     #endregion
 
     #region Unity CallBacks
@@ -230,6 +267,7 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         _rgbd2d = GetComponent<Rigidbody2D>();
+        _attacks = GetComponent<Attacks>();
 
         GameObject go = new GameObject();
         go.name = "Controller";
@@ -242,6 +280,10 @@ public class Controller : MonoBehaviour
         _anim = this.GetComponent<Animator>();
 
         _inventory = this.GetComponent<Items.Inventory>();
+
+        _movementBlocked = false;
+        _movementSlowed = false;
+        _jumpBlocked = false;
     }
 
     void Start()
@@ -257,6 +299,20 @@ public class Controller : MonoBehaviour
             _inventory.UseItem();
 
         if (!_stunned && !_dashing)
+        HandleMovement();
+        HandleJump();
+        HandleDash();
+
+        jumpHelper();
+        _anim.SetBool("Grounded", _grounded);
+        _anim.SetFloat("xVel", xVel);
+
+        _rgbd2d.velocity = new Vector2(xVel, _rgbd2d.velocity.y);
+    }
+
+    void HandleMovement()
+    {
+        if (!_stunned && !_movementBlocked)
         {
             xVel = _jsm.GetAxisClamped(JoyStickManager.e_XBoxControllerAxis.Horizontal) * _lateralSpeed;
             if (xVel < 0)
@@ -268,8 +324,19 @@ public class Controller : MonoBehaviour
                 _transform.localScale = new Vector3(3, 3, 3);
             }
         }
+        if (_movementBlocked && !_dashing)
+        {
+            xVel = 0;
+        }
+        if (_movementSlowed)
+        {
+            xVel /= 5;
+        }
+    }
 
-        if (!_stunned && _jumpcharges > 0 && _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
+    void HandleJump()
+    {
+        if (!_stunned && _jumpcharges > 0 && !_jumpBlocked && _jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
         {
             if (!Grounded)
             {
@@ -280,55 +347,58 @@ public class Controller : MonoBehaviour
             {
                 _anim.Play("Jump");
             }
-            yVel = _jumpSpeed;
+            StartCoroutine("Co_HandleJumpVariation");
             // pushing back the player under me ?
         }
-        else
-        {
-            yVel = _rgbd2d.velocity.y;
-        }
+    }
 
-        if (!_stunned && _canDash && !_dashing)
+    void HandleDash()
+    {
+        if (!_stunned && !_movementBlocked)
         {
+            int direction = 0;
+
             if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LB))
             {
-                StartCoroutine("Co_Dash", -1);
-                StartCoroutine("Co_ReloadDash");
+                direction = -1;
             }
             else if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RB))
             {
-                StartCoroutine("Co_Dash", 1);
-                StartCoroutine("Co_ReloadDash");
+                direction = 1;
+            }
+            if (direction != 0)
+            {
+                _anim.Play(IsLookingRight ? (direction == 1 ? "Dash_Front" : "Dash_Back") : ((direction == -1 ? "Dash_Front" : "Dash_Back")));
+
+                _movementBlocked = true;
+                _attacks.AttackBlocked = true;
+                _jumpBlocked = true;
+                _dashing = true;
+                xVel = _dashVelocity * direction;
             }
         }
-
-        jumpHelper();
-        _anim.SetBool("Grounded", _grounded);
-
-        _rgbd2d.velocity = new Vector2(xVel, yVel);
     }
 
     #endregion
 
     #region Coroutines & Invoke
 
-    private IEnumerator Co_Dash(int direction)
+    public void StopDash()
     {
-        _anim.Play(IsLookingRight ? (direction == 1 ? "Dash_Front" : "Dash_Back") : ((direction == -1 ? "Dash_Front" : "Dash_Back")));
-
-        _dashing = true;
-        xVel = _dashVelocity * direction;
-        yield return new WaitForSeconds(_dashDuration);
         xVel = 0;
+        _attacks.AttackBlocked = false;
+    }
+
+    void DashEnd()
+    {
+        _movementBlocked = false;
+        _jumpBlocked = false;
         _dashing = false;
     }
 
-    private IEnumerator Co_ReloadDash()
-    {
-        _canDash = false;
-        yield return new WaitForSeconds(DashRecoverTime);
-        _canDash = true;
-    }
+    #endregion
+
+    #region Coroutines
 
     private IEnumerator Co_Stun(float duration)
     {
@@ -345,7 +415,19 @@ public class Controller : MonoBehaviour
 
     private void EndInvulnerability()
     {
-        _invulnerable = false;
+        Invulnerable = false;
+    }
+
+    private IEnumerator Co_HandleJumpVariation()
+    {
+        float timeSpent = 0;
+
+        while (_jsm.GetButton(JoyStickManager.e_XBoxControllerButtons.A) && timeSpent < _jumpVariationTime)
+        {
+            _rgbd2d.velocity = new Vector2(_rgbd2d.velocity.x, _jumpSpeed);
+            yield return new WaitForEndOfFrame();
+            timeSpent += Time.deltaTime;
+        }
     }
 
     #endregion
@@ -356,8 +438,8 @@ public class Controller : MonoBehaviour
     {
         RaycastHit2D hit, hit2;
 
-        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, 1 << LayerMask.NameToLayer("Platform"));
-        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, 1 << LayerMask.NameToLayer("Platform"));
+        hit = Physics2D.Linecast(ItemCorner[2].position, ItemCorner[3].position, (1 << LayerMask.NameToLayer("Platform")) | (1 << LayerMask.NameToLayer("PlatformHard")));
+        hit2 = Physics2D.Linecast(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f, (1 << LayerMask.NameToLayer("Platform")) | (1 << LayerMask.NameToLayer("PlatformHard")));
 
         Grounded = hit.collider != null && hit2.collider == null;
     }
@@ -370,7 +452,9 @@ public class Controller : MonoBehaviour
     {
         if (_dashing || _invulnerable)
             return;
+        StopAllCoroutines();
         StartCoroutine("Co_Stun", duration);
+        _anim.Play("Damage_Taken");
     }
 
     /// <summary>
@@ -390,16 +474,14 @@ public class Controller : MonoBehaviour
     /// </summary>
     public void ResetController()
     {
-        LateralSpeed = _baseDashDuration;
-        DashRecoverTime = _baseDashRecoverTime;
         DashVelocity = _baseDashVelocity;
         JumpSpeed = _baseJumpSpeed;
         LateralSpeed = _baseLateralSpeed;
         Invulnerable = false;
+        JumpVariationTime = _baseJumpVariationTime;
 
         MaxJumpCharges = 2;
 
-        _canDash = true;
         _dashing = false;
         _stunned = false;
 
