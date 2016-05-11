@@ -75,10 +75,11 @@ public class ProceduralLevelGeneration : MonoBehaviour
 
                 platformInstantiated.Add((GameObject) Instantiate(instPlatform, new Vector3(0, (steps) - offset), new Quaternion(0, 0, 0, 0)));
 
-                int platformType = UnityEngine.Random.Range(0, specialPlatforms.Length * 5);
-                if (platformType < specialPlatforms.Length)
+                
+                if (UnityEngine.Random.Range(0, 100) < 20)
                 {
                     int side = UnityEngine.Random.Range(0, 3);
+                    int platformType = UnityEngine.Random.Range(0, specialPlatforms.Length);
                     platformInstantiated.Add((GameObject)Instantiate(specialPlatforms[platformType], new Vector3(side == 0 ? -10 : 10, (steps) - offset + side), new Quaternion(0, 0, 0, 0)));
                 }
 
