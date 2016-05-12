@@ -150,21 +150,7 @@ public class Controller : MonoBehaviour
         set { _dashVelocity = value; }
     }
 
-    private float _baseDashRecoverTime = 5f;
-    public float BaseDashRecoverTime
-    {
-        get { return _baseDashRecoverTime; }
-    }
-
-    [SerializeField]
-    private float _dashRecoverTime;
-    public float DashRecoverTime
-    {
-        get { return _dashRecoverTime; }
-        set { _dashRecoverTime = value; }
-    }
-
-    private bool _invulnerable = false;
+        private bool _invulnerable = false;
     public bool Invulnerable
     {
         get { return _invulnerable; }
