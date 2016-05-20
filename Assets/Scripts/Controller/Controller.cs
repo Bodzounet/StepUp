@@ -484,4 +484,9 @@ public class Controller : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
     }
+
+    public void playSounds(string musicName)
+    {
+        SoundManager.PlaySound(musicName);
+    }
 }
