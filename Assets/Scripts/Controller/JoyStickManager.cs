@@ -99,14 +99,14 @@ public class JoyStickManager : MonoBehaviour
     {
         if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
             return Input.GetAxis(_givenNameToButton[btn]) != 0;
-        return Input.GetKeyDown(JoyStickMap.Instance.Map[_givenNameToButton[btn]]);
+        return Input.GetButtonDown(_givenNameToButton[btn]);
     }
 
     public bool GetButton(e_XBoxControllerButtons btn)
     {
         if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
             return Input.GetAxis(_givenNameToButton[btn]) != 0;
-        return Input.GetKey(JoyStickMap.Instance.Map[_givenNameToButton[btn]]);
+        return Input.GetButton(_givenNameToButton[btn]);
     }
 
     public bool GetButtonUp(e_XBoxControllerButtons btn)
@@ -114,7 +114,7 @@ public class JoyStickManager : MonoBehaviour
         if (btn == e_XBoxControllerButtons.RT || btn == e_XBoxControllerButtons.LT)
             return Input.GetAxis(_givenNameToButton[btn]) == 0;
 
-        return Input.GetKeyUp(JoyStickMap.Instance.Map[_givenNameToButton[btn]]);
+        return Input.GetButtonUp(_givenNameToButton[btn]);
     }
 
     private void setMaps(string id)

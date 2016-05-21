@@ -7,7 +7,7 @@ public class CheckForVictory : MonoBehaviour
 {
     public DeathManager[] players;
 
-    void Awake()
+    void Start()
     {
         foreach (var v in players)
         {

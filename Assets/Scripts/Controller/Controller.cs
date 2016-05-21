@@ -281,6 +281,9 @@ public class Controller : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+
         if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.X))
             _inventory.UseItem();
 
@@ -397,6 +400,10 @@ public class Controller : MonoBehaviour
         }
         yield return new WaitForSeconds(duration);
         _stunned = false;
+        _jumpBlocked = false;
+        _movementBlocked = false;
+        _movementSlowed = false;
+        _attacks.AttackBlocked = false;
     }
 
     private void EndInvulnerability()

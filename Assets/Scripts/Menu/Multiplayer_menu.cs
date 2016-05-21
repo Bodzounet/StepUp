@@ -28,8 +28,10 @@ public class Multiplayer_menu : MonoBehaviour {
 
     void Update () {
         foreach (KeyValuePair<int, string> entry in _startsBtn)
-            if (Input.GetKeyDown(JoyStickMap.Instance.Map[entry.Value]))
+            if (Input.GetButtonDown(entry.Value))
             {
+                Debug.Log("key down; key :" + entry.Key + ", value : " + entry.Value);
+
                 if (!_connectedPlayers.Exists(x => x == entry.Key))
                     AddController(entry.Key);
                 else
