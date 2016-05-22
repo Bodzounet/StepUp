@@ -127,6 +127,7 @@ public class Attacks : MonoBehaviour
     }
 
     private Controller _controller;
+    private float _chargePercentage;
 
     #endregion
 
@@ -174,7 +175,8 @@ public class Attacks : MonoBehaviour
         if ((_chargingStrongHit && _controller.Jsm.GetButtonUp(JoyStickManager.e_XBoxControllerButtons.LT)) /*|| _controller.IsMoving*/)
         {
             StopCoroutine("Co_StrongHit");
-            StrongHit((Time.time - _startChargingTime) / _strongAttackChargeDelay);
+            _chargePercentage = (Time.time - _startChargingTime) / _strongAttackChargeDelay;
+            StrongHit();
         }
 
         // use light attack
@@ -204,8 +206,8 @@ public class Attacks : MonoBehaviour
     }
 
     /// <summary>
-    /// stun la cible.
-    /// appelé par la point lorsqu'il est actif
+    /// stun the target.
+    /// called by the damage hitbox
     /// </summary>
     public void LightHit(GameObject target)
     {
@@ -218,15 +220,20 @@ public class Attacks : MonoBehaviour
         }
     }
 
-    public void LightHitIsOver(int id)
+
+    /// <summary>
+    /// Callback when the light hit is over. Allow the player to move.
+    /// </summary>
+    public void LightHitIsOver()
     {
-        // recover time ?
-        // anim.Play("landing");
         _attacksBlocked = false;
         _controller.JumpBlocked = false;
         _controller.MovementBlocked = false;
     }
 
+    /// <summary>
+    /// Callback when the strong hit is over. Allow the player to move.
+    /// </summary>
     public void StrongHitIsOver()
     {
         _attacksBlocked = false;
@@ -239,12 +246,15 @@ public class Attacks : MonoBehaviour
     /// plus on proche de l'épicentre, plus le stun est long
     /// </summary>
     /// <param name="chargePercentage"></param> la puissance du stun, 100% -> radius += _strongAttackFullChargeRadiusIncrease
-    void StrongHit(float chargePercentage)
+    void StrongHit()
     {
         _controller.Anim.Play("Strong_Attack");
         _chargingStrongHit = false;
+    }
 
-        float radius = _strongAttackRadius * (1 + chargePercentage * _strongAttackFullChargeRadiusIncrease);
+    void ActivateStrongHIt()
+    {
+        float radius = _strongAttackRadius * (1 + _chargePercentage * _strongAttackFullChargeRadiusIncrease);
 
         var fx = GameObject.Instantiate(StrongEffectFx, transform.position, Quaternion.identity) as GameObject;
         fx.transform.localScale = new Vector3(1.5f * radius, 1.5f * radius, 1);
@@ -280,7 +290,8 @@ public class Attacks : MonoBehaviour
         _chargingStrongHit = true;
         _controller.Anim.Play("Charge");
         yield return new WaitForSeconds(StrongAttackChargeDelay);
-        StrongHit(1);
+        _chargePercentage = 1;
+        StrongHit();
     }
 
     public void OnStun()
