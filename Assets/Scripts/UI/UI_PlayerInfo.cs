@@ -47,7 +47,7 @@ public class UI_PlayerInfo : MonoBehaviour
         }
         else
         {
-            itemSprite.sprite = go.GetComponent<SpriteRenderer>().sprite;
+            itemSprite.sprite = GameObject.FindObjectOfType<Items.ItemManager>().icons.Single(x => x.name == go.name);
         }
     }
 }

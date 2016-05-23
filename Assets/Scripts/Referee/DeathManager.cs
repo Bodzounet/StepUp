@@ -5,11 +5,13 @@ public class DeathManager : MonoBehaviour
 {
     public delegate void LifeNumberChange(int newLifeNumber);
     public delegate void Death();
+    public delegate void Respawn();
     public delegate void Win(GameObject go);
 
     public event LifeNumberChange OnLifeNumberChange;
     public event Death OnDeath;
     public event Win OnWin;
+    public event Respawn OnRespawn;
 
     private int _lifes = 3;
     public int Lifes
@@ -26,14 +28,17 @@ public class DeathManager : MonoBehaviour
     }
 
     private void Die()
-    {
+    {   
         this.gameObject.SetActive(false);
         if (OnDeath != null)
             OnDeath();
     }
 
-    private void Respawn()
+    private void RespawnPlayer()
     {
+        if (OnRespawn != null)
+            OnRespawn();
+
         var camPos = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
 
         transform.position = new Vector3(-5.0f, camPos.position.y + 4.0f, 0);
@@ -58,12 +63,12 @@ public class DeathManager : MonoBehaviour
     {
         if (col.tag == "KillZone")
         {
+            Lifes--;
+
             if (Lifes == 0)
                 Die();
             else
-                Respawn();
-
-            Lifes--;
+                RespawnPlayer();
         }
     }
 }
