@@ -112,7 +112,11 @@ public class Controller : MonoBehaviour
     public int MaxJumpCharges
     {
         get { return _maxJumpCharges; }
-        set { _maxJumpCharges = value; }
+        set 
+        { 
+            _maxJumpCharges = value;
+            _jumpcharges = value;
+        }
     }
 
     private bool _dashing = false;
@@ -482,13 +486,13 @@ public class Controller : MonoBehaviour
 
     #endregion
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f);
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
-    }
+    //void OnDrawGizmos()
+    //{
+    //    Gizmos.color = Color.blue;
+    //    Gizmos.DrawLine(ItemCorner[2].position + Vector3.up * 0.05f, ItemCorner[3].position + Vector3.up * 0.05f);
+    //    Gizmos.color = Color.cyan;
+    //    Gizmos.DrawLine(ItemCorner[2].position, ItemCorner[3].position);
+    //}
 
     public void playSounds(string musicName)
     {

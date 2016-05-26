@@ -17,6 +17,8 @@ namespace Items
         public List<GameObject> itemsLevel1 = new List<GameObject>();
         public List<GameObject> itemsLevel2 = new List<GameObject>();
 
+        public Sprite[] icons;
+
         public GameObject UpgradeItem(GameObject _item)
         {
             if (itemsLevel1.Contains(_item)) // item is level 1, can be upgraded
