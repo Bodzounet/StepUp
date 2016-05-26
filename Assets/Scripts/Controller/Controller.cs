@@ -182,8 +182,6 @@ public class Controller : MonoBehaviour
         }
     }
 
-    private bool _canDash = true;
-
     public int playerNumber;
 
     private Transform _transform;
@@ -396,14 +394,14 @@ public class Controller : MonoBehaviour
     private IEnumerator Co_Stun(float duration)
     {
         //_anim.Play("Stun");
-        _stunned = true;
+        Stunned = true;
         xVel = 0;
         if (yVel > 0)
         {
             yVel = 0;
         }
         yield return new WaitForSeconds(duration);
-        _stunned = false;
+        Stunned = false;
         _jumpBlocked = false;
         _movementBlocked = false;
         _movementSlowed = false;
@@ -480,7 +478,7 @@ public class Controller : MonoBehaviour
         MaxJumpCharges = 2;
 
         _dashing = false;
-        _stunned = false;
+        Stunned = false;
 
         StopAllCoroutines();
         GetComponent<Attacks>().ResetAttacks();
