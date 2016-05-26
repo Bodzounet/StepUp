@@ -69,6 +69,7 @@ public class DeathManager : MonoBehaviour
                 Die();
             else
                 RespawnPlayer();
+            SoundManager.PlaySound("Ouilleouilleouilleh");
         }
     }
 }
