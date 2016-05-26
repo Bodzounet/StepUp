@@ -498,6 +498,6 @@ public class Controller : MonoBehaviour
 
     public void playSounds(string musicName)
     {
-        SoundManager.PlaySound(musicName);
+        //SoundManager.PlaySound(musicName);
     }
 }
