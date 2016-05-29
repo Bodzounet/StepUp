@@ -262,7 +262,7 @@ public class Controller : MonoBehaviour
         go.transform.parent = this.transform;
 
         _jsm = go.AddComponent<JoyStickManager>();
-        _jsm.Reset(playerNumber);
+        _jsm.Reset(playerNumber - 1);
 
         _transform = this.GetComponent<Transform>();
         _anim = this.GetComponent<Animator>();
