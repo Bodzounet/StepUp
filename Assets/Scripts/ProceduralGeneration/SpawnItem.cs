@@ -10,8 +10,7 @@ public class SpawnItem : MonoBehaviour {
 	void Start () {
 
         if (item != null)
-            /* 10 is spawn chance for item */
-            if (UnityEngine.Random.Range(0, 100) < 20 || isSpawnPlatform)
+            if (UnityEngine.Random.Range(0, 100) < 25 || isSpawnPlatform)
                 Instantiate(item, new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y + 0.75f, 0), new Quaternion(0,0,0,0));
 	}
 	
