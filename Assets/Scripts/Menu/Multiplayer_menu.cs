@@ -12,12 +12,14 @@ public class Multiplayer_menu : MonoBehaviour {
     {
         _connectedPlayers.Add(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Connected";
+        GameObject.Find("Player" + id + "Icon").GetComponent<Animator>().SetBool("ready", true);
     }
 
     private void RemoveController(int id)
     {
         _connectedPlayers.Remove(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Press Start...";
+        GameObject.Find("Player" + id + "Icon").GetComponent<Animator>().SetBool("ready", false);
     }
 
     void Start ()

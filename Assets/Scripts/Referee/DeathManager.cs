@@ -27,6 +27,11 @@ public class DeathManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        OnRespawn += this.GetComponent<Controller>().ResetController;
+    }
+
     private void Die()
     {   
         this.gameObject.SetActive(false);
@@ -59,17 +64,22 @@ public class DeathManager : MonoBehaviour
             OnWin(this.gameObject);
     }
 
+    public void LoseLife()
+    {
+        Lifes--;
+
+        if (Lifes == 0)
+            Die();
+        else
+            RespawnPlayer();
+        SoundManager.PlaySound("Ouilleouilleouilleh");
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.tag == "KillZone")
         {
-            Lifes--;
-
-            if (Lifes == 0)
-                Die();
-            else
-                RespawnPlayer();
-            SoundManager.PlaySound("Ouilleouilleouilleh");
+            LoseLife();
         }
     }
 }

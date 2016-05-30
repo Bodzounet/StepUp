@@ -8,10 +8,13 @@ public class Controller : MonoBehaviour
 {
     public delegate void OnStunDelegate();
     public delegate void OnInvulnerableDelegate();
+    public delegate void StunPercentageChange(float newPercentage);
+
     public event OnStunDelegate OnStun;
     public event OnStunDelegate OnEndStun;
     public event OnInvulnerableDelegate OnStartBeingInvulnerable;
     public event OnInvulnerableDelegate OnEndBeingInvulnerable;
+    public event StunPercentageChange OnStunPercentageChange;
 
     #region variables & properties
 
@@ -248,6 +251,18 @@ public class Controller : MonoBehaviour
         set { _jumpBlocked = value; }
     }
 
+    private float stunningPercentage = 0;
+    public float StunningPercentage
+    {
+        get { return stunningPercentage; }
+        set 
+        {
+            stunningPercentage = value;
+            if (OnStunPercentageChange != null)
+                OnStunPercentageChange(value);
+        }
+    }
+
     #endregion
 
     #region Unity CallBacks
@@ -443,12 +458,15 @@ public class Controller : MonoBehaviour
 
     #region public action
 
-    public void Stun(float duration)
+    public void Stun(float duration, float stunningPercentageIncrease = 0.05f)
     {
         if (_dashing || _invulnerable)
             return;
+
+        StunningPercentage += stunningPercentageIncrease;
+
         StopAllCoroutines();
-        StartCoroutine("Co_Stun", duration);
+        StartCoroutine("Co_Stun", duration * (1 + 2 * StunningPercentage));
         _anim.Play("Damage_Taken");
     }
 
@@ -460,8 +478,8 @@ public class Controller : MonoBehaviour
     {
         if (_dashing || _invulnerable)
             return;
-        xVel = direction.x;
-        yVel = direction.y;
+        xVel = direction.x * (1 + StunningPercentage);
+        yVel = direction.y * (1 + StunningPercentage);
     }
 
     /// <summary>
@@ -474,6 +492,8 @@ public class Controller : MonoBehaviour
         LateralSpeed = _baseLateralSpeed;
         Invulnerable = false;
         JumpVariationTime = _baseJumpVariationTime;
+
+        StunningPercentage = 0;
 
         MaxJumpCharges = 2;
 
@@ -496,6 +516,6 @@ public class Controller : MonoBehaviour
 
     public void playSounds(string musicName)
     {
-        SoundManager.PlaySound(musicName);
+        //SoundManager.PlaySound(musicName);
     }
 }

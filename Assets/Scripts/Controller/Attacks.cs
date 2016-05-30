@@ -126,6 +126,21 @@ public class Attacks : MonoBehaviour
         set { _attacksBlocked = value; }
     }
 
+    [SerializeField]
+    private float _ligthAttackPercentageStun = 0.05f;
+    public float LigthAttackPercentageStun
+    {
+        get { return _ligthAttackPercentageStun; }
+        set { _ligthAttackPercentageStun = value; }
+    }
+
+    private float _strongAttackPercentageStun = 0.1f; // Max value, reached if the attack if fully charged. less elsewhere.
+    public float StrongAttackPercentageStun
+    {
+        get { return _strongAttackPercentageStun; }
+        set { _strongAttackPercentageStun = value; }
+    }
+
     private Controller _controller;
     private float _chargePercentage;
 
@@ -215,7 +230,7 @@ public class Attacks : MonoBehaviour
         {
             Controller targetController = target.GetComponent<Controller>();
 
-            targetController.Stun(LightAttackStunDuration);
+            targetController.Stun(LightAttackStunDuration, LigthAttackPercentageStun);
             targetController.Push((target.transform.position - transform.position).normalized * 4);
         }
     }
@@ -280,7 +295,7 @@ public class Attacks : MonoBehaviour
             }
 
             Controller targetController = v.GetComponentInParent<Controller>();
-            targetController.Stun(_maxStunDuration * percentStun);
+            targetController.Stun(_maxStunDuration * percentStun, StrongAttackPercentageStun * percentStun);
             targetController.Push((v.transform.position - transform.position).normalized * 10);
         }
     }

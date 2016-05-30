@@ -9,6 +9,7 @@ public class UI_PlayerDisplayer : MonoBehaviour
 
     void Start()
     {
+        GameConfig.Instance.Players.Add(1);
         ResetWholeUI();
 
         foreach (var v in GameObject.FindObjectsOfType<DeathManager>())
