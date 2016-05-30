@@ -6,7 +6,7 @@ namespace Items
 {
     public class HookMeToTarget : BaseItem
     {
-        public float beamWidth;
+        public GameObject swapFx;
 
         public override void DoAction()
         {
@@ -16,11 +16,18 @@ namespace Items
 
         public virtual void EndLife()
         {
+            float beamWidth = this.GetComponent<SpriteRenderer>().sprite.rect.width / 100;
+
             var target = Physics2D.BoxCastAll(transform.position, new Vector2(beamWidth, beamWidth), 0, Vector2.up, Mathf.Infinity, 1 << LayerMask.NameToLayer("Player")).Where(x => x.transform != User.transform);
 
             if (target.Count() != 0)
             {
-                User.transform.position = target.First().transform.position;
+                Instantiate(swapFx, User.transform.FindChild("Center").position, Quaternion.identity);
+
+                float x = transform.parent.position.x;
+                this.transform.parent = null;
+                User.transform.position = new Vector2(x, target.First().transform.position.y);
+                
             }
         }
 
