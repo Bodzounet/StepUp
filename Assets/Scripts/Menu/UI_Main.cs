@@ -6,11 +6,13 @@ using UnityEngine.EventSystems;
 public class UI_Main : MonoBehaviour
 {
     public GameObject PanelMainMenu;
+    public GameObject PanelHowTo;
     public GameObject PanelMultiplayer;
     public GameObject PanelOptions;
     public GameObject PanelCredit;
 
     public GameObject DefaultBtnMainMenu;
+    public GameObject DefaultBtnHowTo;
     public GameObject DefaultBtnMultiplayer;
     public GameObject DefaultBtnOptions;
     public GameObject DefaultBtnCredit;
@@ -21,9 +23,11 @@ public class UI_Main : MonoBehaviour
         btn.GetComponent<UnityEngine.UI.Button>().Select();
     }
 
-    public void BtnSiglePlayer()
+    public void BtnHowTo()
     {
-        //Application.LoadLevel("Intro");
+        SelectButton(DefaultBtnHowTo);
+        PanelMainMenu.SetActive(false);
+        PanelHowTo.SetActive(true);
     }
 
     public void BtnMultiplayer()
@@ -53,6 +57,7 @@ public class UI_Main : MonoBehaviour
         SelectButton(DefaultBtnMainMenu);
         PanelCredit.SetActive(false);
         PanelMultiplayer.SetActive(false);
+        PanelHowTo.SetActive(false);
         PanelOptions.SetActive(false);
         PanelMainMenu.SetActive(true);
     }
