@@ -251,6 +251,7 @@ public class Attacks : MonoBehaviour
     /// </summary>
     public void StrongHitIsOver()
     {
+        print("coucou");
         _attacksBlocked = false;
         _controller.JumpBlocked = false;
         _controller.MovementBlocked = false;
