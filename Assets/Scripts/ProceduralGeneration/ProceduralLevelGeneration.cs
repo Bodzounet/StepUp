@@ -80,9 +80,9 @@ public class ProceduralLevelGeneration : MonoBehaviour
                 
                 if (UnityEngine.Random.Range(0, 100) < 50)
                 {
-                    int side = UnityEngine.Random.Range(0, 3);
+                    int side = UnityEngine.Random.Range(0, 10);
                     int platformType = UnityEngine.Random.Range(0, specialPlatforms.Length);
-                    platformInstantiated.Add((GameObject)Instantiate(specialPlatforms[platformType], new Vector3(side == 0 ? -10 : 10, (steps) - offset + side), new Quaternion(0, 0, 0, 0)));
+                    platformInstantiated.Add((GameObject)Instantiate(specialPlatforms[platformType], new Vector3(side < 5 ? -11 : 11, (steps) - offset + side - 5), new Quaternion(0, 0, 0, 0)));
                 }
 
                 // Destruction of platform when under bottomTrigger of the arbiter
