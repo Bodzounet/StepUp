@@ -19,7 +19,6 @@ namespace Items
 
         private IEnumerator Co_MoreJump()
         {
-            Debug.Log("hey");
             _controller.MaxJumpCharges += 1;
             yield return new WaitForSeconds(duration);
             _controller.MaxJumpCharges -= 1;
