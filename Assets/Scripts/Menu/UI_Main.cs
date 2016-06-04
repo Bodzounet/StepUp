@@ -19,7 +19,7 @@ public class UI_Main : MonoBehaviour
 
     private void SelectButton(GameObject btn)
     {
-        //EventSystem.current.SetSelectedGameObject(btn, new BaseEventData(EventSystem.current));
+        EventSystem.current.SetSelectedGameObject(btn, new BaseEventData(EventSystem.current));
         btn.GetComponent<UnityEngine.UI.Button>().Select();
     }
 

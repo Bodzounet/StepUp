@@ -11,6 +11,14 @@ public class GameConfig : Singleton<GameConfig>
         set { _players = value; }
     }
 
+    private bool _howtoEnable = true;
+    public bool HowtoEnable
+    {
+        get { return _howtoEnable; }
+        set { _howtoEnable = value; }
+    }
+
+
     public void ResetGameConfig()
     {
         _players.Clear();
