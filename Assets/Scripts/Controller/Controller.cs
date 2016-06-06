@@ -401,22 +401,25 @@ public class Controller : MonoBehaviour
 
     void HandleDash()
     {
+        int direction = 0;
+
         if (!_stunned && !_movementBlocked)
         {
-            int direction = 0;
+            if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.B))
+            {
+                if (xVel > 0)
+                {
+                    direction = 1;
+                }
+                else if (xVel < 0)
+                {
+                    direction = -1;
+                }
+            }
 
-            if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.LB))
-            {
-                direction = -1;
-            }
-            else if (_jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.RB))
-            {
-                direction = 1;
-            }
             if (direction != 0)
             {
-                _anim.Play(IsLookingRight ? (direction == 1 ? "Dash_Front" : "Dash_Back") : ((direction == -1 ? "Dash_Front" : "Dash_Back")));
-
+                _anim.Play("Dash_Front");
                 _movementBlocked = true;
                 _attacks.AttackBlocked = true;
                 _jumpBlocked = true;
