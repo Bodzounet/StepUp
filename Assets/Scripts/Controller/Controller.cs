@@ -263,6 +263,34 @@ public class Controller : MonoBehaviour
         }
     }
 
+    private bool _onIce;
+    public bool OnIce
+    {
+        get { return _onIce; }
+        set { _onIce = value; }
+    }
+
+    private bool _wasOnMud = false;
+    private bool _OnMud;
+    public bool OnMud
+    {
+        get { return _OnMud; }
+        set 
+        {
+            if (value)
+            {
+                LateralSpeed = BaseLateralSpeed / 3;
+                JumpSpeed = BaseJumpSpeed / 3;
+            }
+            else
+            {
+                LateralSpeed = BaseLateralSpeed;
+                _wasOnMud = true;
+            }
+            _OnMud = value; 
+        }
+    }
+
     #endregion
 
     #region Unity CallBacks
@@ -305,15 +333,28 @@ public class Controller : MonoBehaviour
             _inventory.UseItem();
 
         if (!_stunned && !_dashing)
-        HandleMovement();
+            HandleMovement();
         HandleJump();
         HandleDash();
+
+        HandleIce();
 
         jumpHelper();
         _anim.SetBool("Grounded", _grounded);
         _anim.SetFloat("xVel", xVel);
 
         _rgbd2d.velocity = new Vector2(xVel, _rgbd2d.velocity.y);
+    }
+
+    void HandleIce()
+    {
+        if (OnIce)
+        {
+            if (IsLookingRight)
+                xVel = _lateralSpeed;
+            else
+                xVel = -LateralSpeed;
+        }
     }
 
     void HandleMovement()
@@ -432,12 +473,21 @@ public class Controller : MonoBehaviour
     {
         float timeSpent = 0;
 
+        float actualJumpSpeed = _wasOnMud ? BaseJumpSpeed / 3 : JumpSpeed;
+
         while (_jsm.GetButton(JoyStickManager.e_XBoxControllerButtons.A) && timeSpent < _jumpVariationTime)
         {
-            _rgbd2d.velocity = new Vector2(_rgbd2d.velocity.x, _jumpSpeed);
+            _rgbd2d.velocity = new Vector2(_rgbd2d.velocity.x, actualJumpSpeed);
             yield return new WaitForEndOfFrame();
             timeSpent += Time.deltaTime;
         }
+        if (_wasOnMud)
+        {
+            _wasOnMud = false;
+            JumpSpeed = BaseJumpSpeed;
+        }
+
+        
     }
 
     #endregion
