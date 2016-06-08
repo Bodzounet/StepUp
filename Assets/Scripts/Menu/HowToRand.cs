@@ -46,7 +46,7 @@ public class HowToRand : MonoBehaviour {
             time = 1000.0f;
         }
 
-        if (time > 2.0f)
+        if (time > 7.0f)
             SceneManager.LoadScene("Level");
         time += Time.deltaTime;
     }
