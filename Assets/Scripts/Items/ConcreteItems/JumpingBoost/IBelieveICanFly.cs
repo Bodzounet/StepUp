@@ -28,17 +28,16 @@ namespace Items
 
         void Update()
         {
-            if (_runs && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
+            if (_runs)
             {
-                _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.LateralSpeed);
+                _rgbd.gravityScale = 0;
+                _controller.MaxJumpCharges = 0;
+                _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.BaseLateralSpeed);
             }
         }
 
         private IEnumerator Co_Fly()
         {
-            _rgbd.gravityScale = 0;
-            _controller.MaxJumpCharges = 0;
-            _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.LateralSpeed);
             yield return new WaitForSeconds(duration);
             _Clean();
         }
