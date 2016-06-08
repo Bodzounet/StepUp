@@ -44,18 +44,35 @@ public class DeathManager : MonoBehaviour
         if (OnRespawn != null)
             OnRespawn();
 
-        var camPos = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
+        //var camPos = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
 
-        transform.position = new Vector3(-5.0f, camPos.position.y + 4.0f, 0);
+        //transform.position = new Vector3(-5.0f, camPos.position.y + 4.0f, 0);
 
-        int layermask = 1 << LayerMask.NameToLayer("Platform");
+        //int layermask = 1 << LayerMask.NameToLayer("Platform");
 
-        for (int i = -5; i <= 5; i++)
-        {
-            if (Physics.Raycast(transform.position, -transform.up, Mathf.Infinity, layermask))
-                return;
-            transform.position = new Vector3(i, camPos.position.y + 4.0f, 0);
-        }
+        //for (int i = -5; i <= 5; i++)
+        //{
+        //    if (Physics.Raycast(transform.position, -transform.up, Mathf.Infinity, layermask))
+        //        return;
+        //    transform.position = new Vector3(i, camPos.position.y + 4.0f, 0);
+        //}
+
+        Transform respawnPos = GameObject.FindGameObjectWithTag("MainCamera").transform.GetChild(Random.Range(0, 2));
+        respawnPos.SendMessage("WakeUp");
+        transform.position = new Vector2(respawnPos.position.x, respawnPos.position.y) + Vector2.up * 0.5f;
+
+        StartCoroutine(Co_SetPlayerInvulnerableAfterDeath());
+    }
+
+    IEnumerator Co_SetPlayerInvulnerableAfterDeath()
+    {
+        yield return new WaitForEndOfFrame();
+
+        Items.Inventory inventory = this.GetComponent<Items.Inventory>();
+
+        inventory.PickSpecificItem(GameObject.FindObjectOfType<Items.ItemManager>().PickSpecificItem("Shield"));
+        inventory.UseItem();
+        this.transform.GetComponentInChildren<Items.Shield>().ChangeDuration(1.5f);
     }
 
     public void Wins()

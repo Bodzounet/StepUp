@@ -6,6 +6,7 @@ using System.Linq;
 public class UI_PlayerInfo : MonoBehaviour 
 {
     public Sprite noItem;
+    public Sprite deadPlayer;
 
     public Image playerSprite;
     public Image itemSprite;
@@ -21,6 +22,7 @@ public class UI_PlayerInfo : MonoBehaviour
 
         _managedPlayer.GetComponent<Items.Inventory>().onItemIsSet += OnItemChange;
         _managedPlayer.GetComponent<DeathManager>().OnLifeNumberChange += OnLifeChange;
+        _managedPlayer.GetComponent<DeathManager>().OnDeath += SetDeathIcon;
 
         SpriteRenderer sr = _managedPlayer.GetComponent<SpriteRenderer>();
         playerSprite.sprite = sr.sprite;
@@ -47,5 +49,11 @@ public class UI_PlayerInfo : MonoBehaviour
         {
             itemSprite.sprite = GameObject.FindObjectOfType<Items.ItemManager>().icons.Single(x => x.name == go.name);
         }
+    }
+
+    void SetDeathIcon()
+    {
+        playerSprite.color = Color.white;
+        playerSprite.sprite = deadPlayer;
     }
 }

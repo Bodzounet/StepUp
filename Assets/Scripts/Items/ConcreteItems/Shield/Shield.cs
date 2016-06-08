@@ -25,6 +25,16 @@ namespace Items
             userController.OnEndBeingInvulnerable += OnInvulnerabilityEnds;
         }
 
+        public void ChangeDuration(float newDuration)
+        {
+            shieldDuration = newDuration;
+
+            var userController = User.GetComponent<Controller>();
+            userController.OnEndBeingInvulnerable -= OnInvulnerabilityEnds;
+            userController.InvulnerabilityDuration = shieldDuration;
+            userController.OnEndBeingInvulnerable += OnInvulnerabilityEnds;
+        }
+
         protected void OnInvulnerabilityEnds()
         {
             User.GetComponent<Controller>().OnEndBeingInvulnerable -= OnInvulnerabilityEnds;
