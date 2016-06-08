@@ -12,6 +12,7 @@ public class Multiplayer_menu : MonoBehaviour {
 
     private void AddController(int id)
     {
+        SoundManager.PlaySound("WupMenu");
         _connectedPlayers.Add(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Connected";
         GameObject.Find("Player" + id + "Icon").GetComponent<Animator>().SetBool("ready", true);
@@ -19,6 +20,7 @@ public class Multiplayer_menu : MonoBehaviour {
 
     private void RemoveController(int id)
     {
+        SoundManager.PlaySound("KoeingMenu");
         _connectedPlayers.Remove(id);
         GameObject.Find("Player" + id + "Status").GetComponent<Text>().text = "Press Start...";
         GameObject.Find("Player" + id + "Icon").GetComponent<Animator>().SetBool("ready", false);
@@ -54,6 +56,7 @@ public class Multiplayer_menu : MonoBehaviour {
 
     public void launchTheGame()
     {
+        SoundManager.PlaySound("WupMenu");
         if (_connectedPlayers.Count < 1)
             return;
         GameConfig.Instance.Players = _connectedPlayers;

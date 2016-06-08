@@ -25,6 +25,7 @@ public class UI_Main : MonoBehaviour
 
     public void BtnHowTo()
     {
+        SoundManager.PlaySound("WupMenu");
         SelectButton(DefaultBtnHowTo);
         PanelMainMenu.SetActive(false);
         PanelHowTo.SetActive(true);
@@ -32,6 +33,7 @@ public class UI_Main : MonoBehaviour
 
     public void BtnMultiplayer()
     {
+        SoundManager.PlaySound("WupMenu");
         SelectButton(DefaultBtnMultiplayer);
         PanelMainMenu.SetActive(false);
         PanelMultiplayer.SetActive(true);
@@ -39,6 +41,7 @@ public class UI_Main : MonoBehaviour
 
     public void BtnOptions()
     {
+        SoundManager.PlaySound("WupMenu");
         SelectButton(DefaultBtnOptions);
         PanelMainMenu.SetActive(false);
         PanelOptions.SetActive(true);
@@ -46,6 +49,7 @@ public class UI_Main : MonoBehaviour
 
     public void BtnCredit()
     {
+        SoundManager.PlaySound("WupMenu");
         SelectButton(DefaultBtnCredit);
         PanelMainMenu.SetActive(false);
         PanelCredit.SetActive(true);
@@ -53,6 +57,7 @@ public class UI_Main : MonoBehaviour
 
     public void BtnReturn()
     {
+        SoundManager.PlaySound("KoeingMenu");
         SelectButton(DefaultBtnMainMenu);
         PanelCredit.SetActive(false);
         PanelMultiplayer.SetActive(false);
