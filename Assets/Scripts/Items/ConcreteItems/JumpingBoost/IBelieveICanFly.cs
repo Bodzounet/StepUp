@@ -15,8 +15,6 @@ namespace Items
 
         public override void DoAction()
         {
-            Debug.Log(User.name);
-
             _controller = User.GetComponent<Controller>();
             _rgbd = User.GetComponent<Rigidbody2D>();
             _gravitiyScale = _rgbd.gravityScale;
@@ -47,7 +45,6 @@ namespace Items
 
         private void CB_OnRespawn()
         {
-            Debug.Log("cc");
             StopAllCoroutines();
             _Clean();
         }
