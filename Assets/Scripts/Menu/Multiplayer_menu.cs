@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class Multiplayer_menu : MonoBehaviour {
-    private Dictionary<int, string> _startsBtn;
-    private List<int>               _connectedPlayers;
+    private Dictionary<int, JoystickManagerMini>    _startsBtn;
+    private List<int>                               _connectedPlayers;
+
+    public GameObject                               PanelHowTo;
 
     private void AddController(int id)
     {
@@ -24,19 +26,28 @@ public class Multiplayer_menu : MonoBehaviour {
 
     void Start ()
     {
-        _startsBtn = new Dictionary<int, string>() { { 1, "Start1" }, { 2, "Start2" }, { 3, "Start3" }, { 4, "Start4" } };
+        _startsBtn = new Dictionary<int, JoystickManagerMini>() { { 1, new JoystickManagerMini(0) }, { 2, new JoystickManagerMini(1) }, { 3, new JoystickManagerMini(2) }, { 4, new JoystickManagerMini(3) } };
         _connectedPlayers = new List<int>() { };
     }
 
     void Update () {
-        foreach (KeyValuePair<int, string> entry in _startsBtn)
-            if (Input.GetButtonDown(entry.Value))
+        foreach (KeyValuePair<int, JoystickManagerMini> entry in _startsBtn)
+        {
+            entry.Value.Update();
+            if (entry.Value.isVibrate)
+                entry.Value.SetVibration(.0f, .0f);
+
+
+            if (entry.Value.GetButtonDown(JoystickManagerMini.e_XBoxControllerButtons.Start))
             {
                 if (!_connectedPlayers.Exists(x => x == entry.Key))
                     AddController(entry.Key);
                 else
                     RemoveController(entry.Key);
+
+                entry.Value.SetVibration(1.0f, 1.0f);
             }
+        }
 
         //GameObject.Find("PanelMultiplayer/Play").SetActive(_connectedPlayer.Count >= 2);
     }
@@ -46,6 +57,8 @@ public class Multiplayer_menu : MonoBehaviour {
         if (_connectedPlayers.Count < 1)
             return;
         GameConfig.Instance.Players = _connectedPlayers;
-        SceneManager.LoadScene("Level");
+        
+        this.gameObject.SetActive(false);
+        PanelHowTo.SetActive(true);
     }
 }

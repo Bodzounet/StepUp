@@ -47,7 +47,6 @@ public class UI_Main : MonoBehaviour
     public void BtnCredit()
     {
         SelectButton(DefaultBtnCredit);
-        DefaultBtnMultiplayer.GetComponent<UnityEngine.UI.Button>().Select();
         PanelMainMenu.SetActive(false);
         PanelCredit.SetActive(true);
     }
