@@ -11,7 +11,7 @@ namespace Items
             {
                 if (User.GetComponent<Inventory>().Item == null)
                 {
-                    User.GetComponent<Inventory>().PickSpecificItem(GameObject.FindObjectOfType<ItemManager>().PickSpecificItem(col.transform.root.name.Replace("Aux", "Zone")));
+                    User.GetComponent<Inventory>().PickSpecificItem(GameObject.FindObjectOfType<ItemManager>().PickSpecificItem(col.tag));
                 }
 
                 Destroy(col.transform.root.gameObject);
@@ -22,6 +22,20 @@ namespace Items
                 UserController.InvulnerabilityDuration = 0.1f;
                 Destroy(this.gameObject);
             }
+        }
+
+        public void StealWifi(string wifiName)
+        {
+            if (User.GetComponent<Inventory>().Item == null)
+            {
+                User.GetComponent<Inventory>().PickSpecificItem(GameObject.FindObjectOfType<ItemManager>().PickSpecificItem(wifiName));
+            }
+
+            var UserController = User.GetComponent<Controller>();
+
+            UserController.OnEndBeingInvulnerable -= OnInvulnerabilityEnds;
+            UserController.InvulnerabilityDuration = 0.1f;
+            Destroy(this.gameObject);
         }
     }
 }

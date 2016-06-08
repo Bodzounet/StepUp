@@ -22,12 +22,23 @@ namespace Items
 
             if (target.Count() != 0)
             {
-                Instantiate(swapFx, User.transform.FindChild("Center").position, Quaternion.identity);
+                 var absorbShield = target.First().collider.transform.FindChild("AbsorbChild");
+                 if (absorbShield != null)
+                 {
+                     absorbShield.SendMessage("StealWifi", "Wifi");
+                 }
+                 else
+                 {
+                     target = target.Where(y => !y.collider.GetComponent<Controller>().Invulnerable);
+                     if (target.Count() != 0)
+                     {
+                         Instantiate(swapFx, User.transform.FindChild("Center").position, Quaternion.identity);
 
-                float x = transform.parent.position.x;
-                this.transform.parent = null;
-                User.transform.position = new Vector2(x, target.First().transform.position.y);
-                
+                         float x = transform.parent.position.x;
+                         this.transform.parent = null;
+                         User.transform.position = new Vector2(x, target.First().transform.position.y);
+                     }
+                 }
             }
         }
 
