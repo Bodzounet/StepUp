@@ -205,11 +205,11 @@ public class Attacks : MonoBehaviour
             }
             float angle = _controller.Jsm.GetAxisAngle();
 
-            if (angle > 45 && angle < 135)
+            if (angle < -45 && angle > -135)
             {
                 _controller.Anim.Play("Up_Attack");
             }
-            else if (angle < -45 && angle > -135)
+            else if (angle > 45 && angle < 135)
             {
                 _controller.Anim.Play("Down_Attack");
             }
