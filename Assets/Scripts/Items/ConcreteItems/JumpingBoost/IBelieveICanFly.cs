@@ -15,8 +15,6 @@ namespace Items
 
         public override void DoAction()
         {
-            Debug.Log(User.name);
-
             _controller = User.GetComponent<Controller>();
             _rgbd = User.GetComponent<Rigidbody2D>();
             _gravitiyScale = _rgbd.gravityScale;
@@ -30,24 +28,22 @@ namespace Items
 
         void Update()
         {
-            if (_runs && _controller.Jsm.GetButtonDown(JoyStickManager.e_XBoxControllerButtons.A))
+            if (_runs)
             {
-                _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.LateralSpeed);
+                _rgbd.gravityScale = 0;
+                _controller.MaxJumpCharges = 0;
+                _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.BaseLateralSpeed);
             }
         }
 
         private IEnumerator Co_Fly()
         {
-            _rgbd.gravityScale = 0;
-            _controller.MaxJumpCharges = 0;
-            _rgbd.velocity = new Vector2(_rgbd.velocity.x, _controller.LateralSpeed);
             yield return new WaitForSeconds(duration);
             _Clean();
         }
 
         private void CB_OnRespawn()
         {
-            Debug.Log("cc");
             StopAllCoroutines();
             _Clean();
         }
