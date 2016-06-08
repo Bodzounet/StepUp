@@ -13,14 +13,26 @@ namespace Items
 
             if (targets.Count() != 0)
             {
-                this.transform.parent = null;
-                var target = targets.First();
-                var targetIniPos = target.transform.position;
-                target.transform.position = new Vector3(targetIniPos.x, User.transform.position.y);
-                User.transform.position = new Vector3(User.transform.position.x, targetIniPos.y);
+                var absorbShield = targets.First().collider.transform.FindChild("AbsorbChild");
+                if (absorbShield != null)
+                {
+                    absorbShield.SendMessage("StealWifi", "Wifi++");
+                }
+                else
+                {
+                    targets = targets.Where(y => !y.collider.GetComponent<Controller>().Invulnerable);
+                    if (targets.Count() != 0)
+                    {
+                        this.transform.parent = null;
+                        var target = targets.First();
+                        var targetIniPos = target.transform.position;
+                        target.transform.position = new Vector3(targetIniPos.x, User.transform.position.y);
+                        User.transform.position = new Vector3(User.transform.position.x, targetIniPos.y);
 
-                Instantiate(swapFx, User.transform.FindChild("Center").position, Quaternion.identity);
-                Instantiate(swapFx, target.transform.FindChild("Center").position, Quaternion.identity);
+                        Instantiate(swapFx, User.transform.FindChild("Center").position, Quaternion.identity);
+                        Instantiate(swapFx, target.transform.FindChild("Center").position, Quaternion.identity);
+                    }
+                }
             }
         }
 
